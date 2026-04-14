@@ -1,5 +1,5 @@
-const CACHE = 'bjj-coach-v2';
-const BASE = '/bjj-coach';
+const CACHE = 'bjj-coach-v3';
+const BASE = '/Trainer-Coach';
 const ASSETS = [
   BASE + '/',
   BASE + '/index.html',
