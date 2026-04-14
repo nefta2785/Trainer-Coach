@@ -142,7 +142,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .pbar-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
 .pbar-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--red-bright));border-radius:3px;transition:width .5s ease}
 .hist-t{background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.hr-row{display:grid;grid-template-columns:1fr 65px 50px 50px 85px;padding:8px 13px;border-bottom:1px solid var(--border);font-size:11px;align-items:center;gap:5px}
+.hr-row{display:grid;grid-template-columns:1fr 65px 50px 50px 80px 70px;padding:8px 13px;border-bottom:1px solid var(--border);font-size:11px;align-items:center;gap:5px}
 .hr-row:last-child{border-bottom:none}
 .hr-hdr{background:var(--surface3);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
 /* DIARY */
@@ -307,6 +307,46 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   </div>
 
   <div id="sched-changes-list" style="margin-top:10px"></div>
+
+  <!-- SESIÓN EXTRA -->
+  <div class="shdr" style="margin-top:20px">Sesión extra — cualquier día</div>
+  <div class="banner b-green">
+    <div class="b-icon">➕</div>
+    <div>
+      <div class="b-title">¿Entrenaste un día que no estaba planeado?</div>
+      <div class="b-text">Dime qué tienes disponible (gym, parque, calistenia, en casa) y genero una sesión adaptada que no interfiera con tu recuperación.</div>
+    </div>
+  </div>
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div class="fg" style="margin:0">
+        <label class="fl">¿Qué día es hoy?</label>
+        <select class="fsel" id="extra-day">
+          <option value="lunes">Lunes</option>
+          <option value="martes">Martes</option>
+          <option value="miercoles">Miércoles</option>
+          <option value="jueves">Jueves</option>
+          <option value="viernes">Viernes</option>
+          <option value="sabado" selected>Sábado</option>
+          <option value="domingo">Domingo</option>
+        </select>
+      </div>
+      <div class="fg" style="margin:0">
+        <label class="fl">Energía disponible</label>
+        <select class="fsel" id="extra-energy">
+          <option value="alta">Alta 🔥 — puedo dar mucho</option>
+          <option value="media" selected>Media ⚡ — entreno normal</option>
+          <option value="baja">Baja 😴 — solo movilidad / ligero</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fl">¿Qué tienes disponible hoy?</label>
+      <textarea class="fta" id="extra-equip" style="min-height:60px" placeholder="Ej: Sólo tengo mancuernas en casa, o estoy en un parque con barras, o tengo acceso al gym Oasis, o solo quiero hacer movilidad..."></textarea>
+    </div>
+    <button class="btn btn-green" onclick="generateExtraSession()" id="extra-btn" style="background:var(--success)">🤖 Generar sesión extra</button>
+    <div id="extra-out" style="margin-top:12px;display:none;background:var(--surface3);border:1px solid rgba(39,174,96,.3);border-radius:6px;padding:12px;font-size:12px;color:#CCC;line-height:1.6;white-space:pre-wrap"></div>
+  </div>
 </div>
 
 <!-- ══════════════ GYM ══════════════ -->
@@ -388,7 +428,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   </div>
   <div class="shdr">Historial de cargas</div>
   <div class="hist-t">
-    <div class="hr-row hr-hdr"><span>Ejercicio</span><span>Peso</span><span>Reps</span><span>Sets</span><span>Fecha</span></div>
+    <div class="hr-row hr-hdr" style="grid-template-columns:1fr 65px 50px 50px 80px 70px"><span>Ejercicio</span><span>Peso</span><span>Reps</span><span>Sets</span><span>Fecha</span><span></span></div>
     <div id="hist-body"><div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">Loguea tu primera sesión.</div></div>
   </div>
 </div>
@@ -484,14 +524,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <div class="b-text">Tus calambres son principalmente <strong>fatiga neuromuscular</strong>, no solo sal. Tomar agua sola post-esfuerzo <em>aumenta</em> la susceptibilidad. Usa bebida con sodio+potasio+glucosa antes y durante el torneo.</div>
     </div>
   </div>
-  <div class="shdr">Deficiencias identificadas</div>
-  <div class="def-grid">
-    <div class="def-card"><div class="def-prob">⚠️ Calambres cuádriceps</div><div class="def-sol">TUT 4-1-X-0 en búlgara + progresión de cardio. Electrolitos antes del torneo.</div></div>
-    <div class="def-card"><div class="def-prob">⚠️ Cardio insuficiente</div><div class="def-sol">Fase 1: bici zona 2. Fase 2: HIIT 30/30. Fase 3: activación. Progresión de 8 semanas.</div></div>
-    <div class="def-card"><div class="def-prob">⚠️ Guardia de la riva</div><div class="def-sol">Hip thrust + búlgara = explosión de cadera y fuerza unilateral para pasar.</div></div>
-    <div class="def-card"><div class="def-prob">⚠️ Salida arco y flecha</div><div class="def-sol">Remo unilateral + jalón al pecho = fuerza de jale + visualización en warm-up.</div></div>
-    <div class="def-card"><div class="def-prob">⚠️ Defender barras</div><div class="def-sol">Grip training: farmer hold + curl Z. Fuerza isométrica de codo bajo fatiga.</div></div>
-    <div class="def-card"><div class="def-prob">⚠️ Control montada</div><div class="def-sol">Hip thrust + dominadas en calistenia = cadera arriba y tensión de jalón.</div></div>
+  <div class="shdr">Análisis de tus reportes</div>
+  <div id="coach-dynamic-grid">
+    <div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">Agrega entradas al Diario BJJ para ver el análisis dinámico aquí.</div>
   </div>
   <div class="shdr">Protocolo torneo</div>
   <div class="banner b-gold" style="margin-bottom:8px"><div class="b-icon">🏆</div><div><div class="b-title">DÍA ANTES</div><div class="b-text">Hidratación alta con electrolitos. Cena: carbohidratos + proteína moderada. Sin entrenar. 8h de sueño mínimo. Visualiza tus escapes antes de dormir.</div></div></div>
@@ -737,10 +772,11 @@ function nav(id, el){
   document.getElementById('page-'+id).classList.add('active');
   el.classList.add('active');
   if(id==='semana') renderSemana();
-  if(id==='gym') { checkGymRegano(); renderWorkout(); }
+  if(id==='gym') { checkGymRegano(); renderWorkout(); renderProposalIfPending(); }
   if(id==='calistenia') renderCalistenia();
   if(id==='progresion') renderProgress();
   if(id==='diario') renderDiary();
+  if(id==='coach') renderCoach();
   if(id==='gyms') renderGyms();
 }
 
@@ -995,24 +1031,31 @@ function setCalLevel(lvl, el){
 
 function renderCalistenia(){
   const lvl = CAL_WORKOUTS[S.calLevel];
-  const lastCal = S.logs.filter(l=>l.isCal);
   let h = `<div class="banner b-purple" style="margin-bottom:12px">
     <div class="b-icon">📋</div>
     <div><div class="b-title">${lvl.label}</div><div class="b-text">${lvl.note}</div></div>
   </div>`;
+
+  // Only mark as "done today" if logged today
+  const today = new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short'});
 
   lvl.blocks.forEach(block=>{
     h+=`<div class="shdr">${block.name}</div>`;
     block.items.forEach(item=>{
       const logId = 'cal_'+item.ex.replace(/[^a-z]/gi,'_').toLowerCase().slice(0,20);
       const pastLogs = S.logs.filter(l=>l.id===logId&&l.isCal);
-      h+=`<div class="ex-card ${pastLogs.length?'logged':''}" style="border-color:${pastLogs.length?'var(--success)':'rgba(142,68,173,.3)'}">
-        <div class="ex-name-bar" style="background:rgba(142,68,173,.15)"><span class="ex-name" style="color:#E8DAEF">${item.ex}</span>${pastLogs.length?'<span style="color:var(--success);font-size:11px">✓</span>':''}</div>
+      const loggedToday = pastLogs.some(l=>l.date===today);
+      // Never permanent green — only show a subtle history indicator
+      h+=`<div class="ex-card" style="border-color:rgba(142,68,173,.3)">
+        <div class="ex-name-bar" style="background:rgba(142,68,173,.15)">
+          <span class="ex-name" style="color:#E8DAEF">${item.ex}</span>
+          ${loggedToday?'<span style="color:var(--success);font-size:10px;font-family:monospace">✓ hoy</span>':''}
+        </div>
         <div class="ex-meta"><span class="chip purple">${item.detail}</span></div>
         <div class="ex-body">
           <div class="ex-lbl">Ejecución</div>
           <div class="ex-text">${item.exec}</div>
-          ${pastLogs.length?`<div class="log-hist" style="margin-top:6px">${pastLogs.slice(-2).map(l=>`<div class="lhe"><span>${l.date}</span><span class="v">${l.reps} · ${l.note||''}</span></div>`).join('')}</div>`:''}
+          ${pastLogs.length?`<div class="ex-lbl" style="margin-top:8px">Últimos registros</div><div class="log-hist">${pastLogs.slice(-2).map(l=>`<div class="lhe"><span>${l.date}</span><span class="v">${l.reps} · ${l.note||''}</span></div>`).join('')}</div>`:''}
           <div class="bjj-note">🥋 ${item.bjj}</div>
         </div>
         <div class="log-sec">
@@ -1049,14 +1092,63 @@ function renderProgress(){
   document.getElementById('st-bjj').textContent=S.diary.length;
   const body=document.getElementById('hist-body');
   if(!S.logs.length){ body.innerHTML='<div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">Loguea tu primera sesión.</div>'; return; }
-  body.innerHTML=[...S.logs].reverse().slice(0,30).map(l=>`
-    <div class="hr-row">
-      <span>${l.name}${l.isCal?'<span style="color:var(--purple);font-size:9px"> ·cal</span>':''}</span>
-      <span style="color:var(--red-bright);font-family:monospace">${l.weight?l.weight+'lb':l.reps}</span>
-      <span>${l.reps}</span>
-      <span>${l.sets}</span>
-      <span style="color:var(--muted)">${l.date}</span>
+  const reversed=[...S.logs].map((l,i)=>({...l,origIdx:i})).reverse().slice(0,30);
+  body.innerHTML=reversed.map(l=>`
+    <div class="hr-row" id="logrow-${l.origIdx}">
+      <span style="font-size:11px">${l.name}${l.isCal?'<span style="color:var(--purple);font-size:9px"> ·cal</span>':''}</span>
+      <span id="lv-w-${l.origIdx}" style="color:var(--red-bright);font-family:monospace;cursor:pointer" onclick="editLog(${l.origIdx},'w')">${l.weight?l.weight+'lb':l.reps}</span>
+      <span id="lv-r-${l.origIdx}" style="cursor:pointer" onclick="editLog(${l.origIdx},'r')">${l.reps}</span>
+      <span id="lv-s-${l.origIdx}" style="cursor:pointer" onclick="editLog(${l.origIdx},'s')">${l.sets}</span>
+      <span style="color:var(--muted);font-size:10px">${l.date}</span>
+      <div style="display:flex;gap:4px;justify-content:flex-end">
+        <button class="btn btn-ghost btn-sm" style="padding:2px 7px;font-size:10px" onclick="editLogFull(${l.origIdx})">✏️</button>
+        <button class="btn btn-ghost btn-sm" style="padding:2px 7px;font-size:10px;color:var(--red-bright)" onclick="deleteLog(${l.origIdx})">✕</button>
+      </div>
+    </div>
+    <div id="log-edit-${l.origIdx}" style="display:none;background:var(--surface3);padding:10px 14px;border-bottom:1px solid var(--border)">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+        <div class="lf"><label>Peso (lb)</label><input type="number" id="le-w-${l.origIdx}" value="${l.weight||0}" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:monospace;font-size:12px;padding:5px 8px;outline:none"></div>
+        <div class="lf"><label>Reps</label><input type="number" id="le-r-${l.origIdx}" value="${l.reps}" style="width:60px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:monospace;font-size:12px;padding:5px 8px;outline:none"></div>
+        <div class="lf"><label>Sets</label><input type="number" id="le-s-${l.origIdx}" value="${l.sets}" style="width:55px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:monospace;font-size:12px;padding:5px 8px;outline:none"></div>
+        <div class="lf"><label>Nota</label><input type="text" id="le-n-${l.origIdx}" value="${l.note||''}" style="width:130px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;padding:5px 8px;outline:none"></div>
+        <button class="btn btn-red btn-sm" onclick="saveLogEdit(${l.origIdx})">Guardar</button>
+        <button class="btn btn-ghost btn-sm" onclick="cancelLogEdit(${l.origIdx})">Cancelar</button>
+      </div>
     </div>`).join('');
+}
+
+function editLogFull(idx){
+  const all=document.querySelectorAll('[id^="log-edit-"]');
+  all.forEach(el=>{ if(el.id!=='log-edit-'+idx) el.style.display='none'; });
+  const el=document.getElementById('log-edit-'+idx);
+  if(el) el.style.display=el.style.display==='none'?'block':'none';
+}
+
+function editLog(idx, field){
+  editLogFull(idx);
+  setTimeout(()=>{ const inp=document.getElementById('le-'+field+'-'+idx); if(inp){ inp.focus(); inp.select(); } },50);
+}
+
+function saveLogEdit(idx){
+  const w=document.getElementById('le-w-'+idx)?.value;
+  const r=document.getElementById('le-r-'+idx)?.value;
+  const s=document.getElementById('le-s-'+idx)?.value;
+  const n=document.getElementById('le-n-'+idx)?.value;
+  if(!S.logs[idx]) return;
+  S.logs[idx]={...S.logs[idx], weight:parseFloat(w)||0, reps:parseInt(r)||S.logs[idx].reps, sets:parseInt(s)||S.logs[idx].sets, note:n||''};
+  SAVE(); toast('✓ Registro actualizado','var(--success)'); renderProgress();
+}
+
+function cancelLogEdit(idx){
+  const el=document.getElementById('log-edit-'+idx);
+  if(el) el.style.display='none';
+}
+
+function deleteLog(idx){
+  if(!confirm('¿Eliminar este registro?')) return;
+  S.logs.splice(idx,1);
+  SAVE(); toast('Registro eliminado','var(--muted)'); renderProgress();
+  renderWorkout();
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1082,20 +1174,34 @@ function saveDiary(){
   [...OK_TAGS,...WEAK_TAGS].forEach(t=>{ const el=document.getElementById(t); if(el) el.checked=false; });
   toast('✓ Entrada guardada','var(--success)');
   renderDiary();
+  // Check if persistent weaknesses warrant a routine adjustment proposal
+  setTimeout(()=>checkForRoutineProposal(), 1500);
 }
 
 function renderDiary(){
   const list=document.getElementById('diary-list');
   if(!S.diary.length){ list.innerHTML='<div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">Sin entradas aún.</div>'; return; }
-  list.innerHTML=S.diary.slice(0,20).map(e=>`
+  list.innerHTML=S.diary.slice(0,20).map((e,i)=>`
     <div class="diary-entry">
-      <div class="de-hdr"><span class="de-date">${e.date} · ${e.dur}min · energía ${e.energy||'media'}</span><span class="de-type ${e.type}">${e.type.toUpperCase()}</span></div>
+      <div class="de-hdr">
+        <span class="de-date">${e.date} · ${e.dur}min · energía ${e.energy||'media'}</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="de-type ${e.type}">${e.type.toUpperCase()}</span>
+          <button class="btn btn-ghost btn-sm" style="padding:2px 7px;font-size:10px;color:var(--red-bright)" onclick="deleteDiary(${i})">✕</button>
+        </div>
+      </div>
       <div class="de-text">${e.text}</div>
       <div class="de-tags">
         ${e.oks.map(t=>`<span class="de-tag ok">✓ ${t}</span>`).join('')}
         ${e.weaks.map(t=>`<span class="de-tag weak">✗ ${t}</span>`).join('')}
       </div>
     </div>`).join('');
+}
+
+function deleteDiary(idx){
+  if(!confirm('¿Eliminar esta entrada del diario?')) return;
+  S.diary.splice(idx,1);
+  SAVE(); toast('Entrada eliminada','var(--muted)'); renderDiary();
 }
 
 async function aiDiaryRec(){
@@ -1146,7 +1252,216 @@ function getSmartRec(){
 }
 
 // ══════════════════════════════════════════════════════════════
-// GYMS — con imagen y reconocimiento de equipamiento
+// COACH — dinámico basado en diario
+// ══════════════════════════════════════════════════════════════
+
+const WEAKNESS_SOLUTIONS = {
+  'Cardio':        {icon:'🫁', prob:'Cardio insuficiente',          sol:'Prioriza el finisher de bici AMBOS días de gym. Fase 1: zona 2. Fase 2: 30/30 ALL-OUT. No lo saltes.'},
+  'Guard ret.':    {icon:'🛡', prob:'Guard retention débil',         sol:'Pallof Press con máxima tensión. Jalón bajo en miércoles. Anilla row en calistenia domingo.'},
+  'Guard passing': {icon:'🦵', prob:'Guard passing insuficiente',    sol:'Zercher squat + búlgara son tu foco. Explosión de cadera = pasar la riva y cualquier guardia.'},
+  'Barridas':      {icon:'🔄', prob:'Barridas flojas',               sol:'Hip thrust al máximo esfuerzo — pausa 2s arriba cada rep. Base directa de sweep desde cualquier guardia.'},
+  'Grip':          {icon:'✊', prob:'Grip débil',                    sol:'Sin straps en ningún ejercicio. Farmer hold en calistenia. Remo unilateral sin ayuda.'},
+  'Explosividad':  {icon:'⚡', prob:'Explosividad baja',             sol:'Concéntrico lo más rápido posible en todos los ejercicios. Cable pull-through explosivo en lugar de hip thrust si quieres más velocidad.'},
+  'Guardia riva':  {icon:'🕸', prob:'No pasa la guardia de la riva', sol:'Hip thrust + búlgara. Fuerza unilateral de cadera = romper la estructura de la riva. Visualiza durante warm-up.'},
+  'Montada':       {icon:'🏔', prob:'Control de montada inestable',  sol:'Hip thrust = control de cadera arriba. Dominadas en calistenia = tensión para mantener la posición.'},
+  'Arco y flecha': {icon:'🏹', prob:'Falla salida de arco y flecha', sol:'Remo unilateral + jalón al pecho son tu foco cada sesión. Visualiza el escape durante el warm-up.'},
+  'Barras':        {icon:'💪', prob:'Defiende mal las barras',       sol:'Agarre isométrico en posición de fallo en cada set. Chin-up negativo lento en calistenia.'},
+  'Fatiga muscular':{icon:'😮‍💨',prob:'Fatiga muscular intensa',     sol:'RPE máx 8 siempre. 1-2 reps en el tanque. El volumen está bien — la recuperación entre sets debe ser completa.'},
+  'Calambres':     {icon:'⚡', prob:'Calambres post-entrenamiento',  sol:'Electrolitos ANTES de llegar al gym. Leg press en warm-up para activar cuádriceps. Hidratación constante.'},
+  'Mindset':       {icon:'🧠', prob:'Mindset de competencia',        sol:'Visualización en CADA warm-up. Escapes específicos (arco y flecha, riva). El gym es donde entrenas el cuerpo Y la mente.'}
+};
+
+function renderCoach(){
+  const grid = document.getElementById('coach-dynamic-grid');
+  if(!S.diary.length){
+    grid.innerHTML='<div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">Agrega entradas al Diario BJJ para ver el análisis dinámico aquí.</div>';
+    return;
+  }
+
+  // Count weak/ok tags across all diary entries
+  const weakCounts={}, okCounts={};
+  S.diary.forEach(e=>{
+    e.weaks.forEach(w=>{ weakCounts[w]=(weakCounts[w]||0)+1; });
+    e.oks.forEach(o=>{ okCounts[o]=(okCounts[o]||0)+1; });
+  });
+
+  const totalEntries = S.diary.length;
+  const sortedWeaks = Object.entries(weakCounts).sort(([,a],[,b])=>b-a);
+  const sortedOks   = Object.entries(okCounts).sort(([,a],[,b])=>b-a);
+
+  let h = '';
+
+  // Summary banner
+  h += `<div class="banner b-blue" style="margin-bottom:14px">
+    <div class="b-icon">📊</div>
+    <div>
+      <div class="b-title">Análisis de ${totalEntries} entrada${totalEntries>1?'s':''} de BJJ</div>
+      <div class="b-text">Basado en tus reportes reales del mat. Las deficiencias con más apariciones tienen mayor peso en las recomendaciones de gym.</div>
+    </div>
+  </div>`;
+
+  // Weaknesses — dynamic
+  if(sortedWeaks.length){
+    h += `<div class="def-grid">`;
+    sortedWeaks.slice(0,6).forEach(([tag, count])=>{
+      const sol = WEAKNESS_SOLUTIONS[tag];
+      if(!sol) return;
+      const pct = Math.round((count/totalEntries)*100);
+      const intensity = count >= 3 ? 'var(--red-bright)' : count >= 2 ? 'var(--gold)' : 'var(--muted)';
+      h += `<div class="def-card" style="border-color:${count>=2?'rgba(192,57,43,.3)':'var(--border)'}">
+        <div class="def-prob" style="display:flex;justify-content:space-between;align-items:center">
+          <span>${sol.icon} ${sol.prob}</span>
+          <span style="font-size:9px;color:${intensity};font-family:monospace;font-weight:700">${count}/${totalEntries} (${pct}%)</span>
+        </div>
+        <div class="def-sol">${sol.sol}</div>
+        <div style="margin-top:6px;height:3px;background:var(--border);border-radius:2px;overflow:hidden">
+          <div style="height:100%;width:${Math.min(pct,100)}%;background:${intensity};border-radius:2px;transition:width .5s"></div>
+        </div>
+      </div>`;
+    });
+    h += `</div>`;
+  }
+
+  // Improvements — things going well
+  if(sortedOks.length){
+    h += `<div class="shdr">Lo que está mejorando</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">`;
+    sortedOks.slice(0,6).forEach(([tag,count])=>{
+      h += `<div style="background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.3);border-radius:6px;padding:6px 12px;font-size:11px;color:#58D68D">
+        ✓ ${tag} <span style="font-family:monospace;font-size:10px;opacity:.7">${count}x</span>
+      </div>`;
+    });
+    h += `</div>`;
+  }
+
+  // Trend — last 3 vs previous 3
+  if(S.diary.length >= 4){
+    const recent = S.diary.slice(0,3);
+    const older  = S.diary.slice(3,6);
+    const recentWeaks = new Set(recent.flatMap(e=>e.weaks));
+    const olderWeaks  = new Set(older.flatMap(e=>e.weaks));
+    const resolved    = [...olderWeaks].filter(w=>!recentWeaks.has(w));
+    const newProblems = [...recentWeaks].filter(w=>!olderWeaks.has(w));
+
+    if(resolved.length || newProblems.length){
+      h += `<div class="shdr">Tendencia reciente</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">`;
+      if(resolved.length) h += `<div class="banner b-green" style="margin:0"><div class="b-icon" style="font-size:14px">📈</div><div><div class="b-title" style="color:#58D68D">Resuelto</div><div class="b-text" style="font-size:11px">${resolved.join(', ')}</div></div></div>`;
+      if(newProblems.length) h += `<div class="banner b-red" style="margin:0"><div class="b-icon" style="font-size:14px">📉</div><div><div class="b-title">Nuevo foco</div><div class="b-text" style="font-size:11px">${newProblems.join(', ')}</div></div></div>`;
+      h += `</div>`;
+    }
+  }
+
+  grid.innerHTML = h;
+}
+
+async function generateExtraSession(){
+  const day=document.getElementById('extra-day').value;
+  const energy=document.getElementById('extra-energy').value;
+  const equip=document.getElementById('extra-equip').value.trim();
+  if(!equip){ toast('Cuéntame qué tienes disponible','var(--red)'); return; }
+  const btn=document.getElementById('extra-btn');
+  const out=document.getElementById('extra-out');
+  out.style.display='block'; out.textContent='Generando sesión...'; btn.disabled=true;
+  const bjjCtx=S.diary.slice(0,3).map(e=>`${e.date}(${e.type}): bien=${e.oks.join(',')}, mal=${e.weaks.join(',')}`).join('; ');
+  const weekCtx={lunes:'día de gym habitual — si va hoy sería doble',martes:'día de BJJ Gi — ya entrenó mat',miercoles:'día de gym habitual — si va hoy sería doble',jueves:'BJJ No-Gi + Thai Boxing — doble sesión fuerte',viernes:'Open Mat Gi — rodada libre',sabado:'día de descanso habitual — sesión EXTRA no planeada',domingo:'día de calistenia en Barras Heroes'};
+  const prompt=`Eres un entrenador S&C para BJJ competitivo. Atleta: 27 años, 65 kg, intermedio Gi+No-Gi, competencia 6 Jun 2026. Rutina semanal: Lunes gym, Martes BJJ Gi, Miércoles gym, Jueves BJJ No-Gi+Thai, Viernes Open Mat Gi, Domingo calistenia.
+
+Quiere entrenar EXTRA hoy: ${day} (${weekCtx[day]||'día libre'}).
+Energía: ${energy}. Equipamiento: ${equip}.
+Historial BJJ reciente (debilidades): ${bjjCtx||'sin datos'}.
+
+REGLA: sesión NO planeada. Debe ser corta (30–45 min), sin comprometer recuperación. Si energía baja: solo movilidad y core suave.
+
+Genera: 1) Movilidad/activación 5 min, 2) Trabajo principal 3–4 ejercicios con sets×reps + ejecución 1 línea + conexión BJJ, 3) Finisher opcional 5–8 min solo si energía alta/media.
+Sin burpees, sin calistenia si no hay barras. Solo equipo disponible. Español. Máx 220 palabras.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    out.textContent=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'Error.';
+  }catch(e){out.textContent='Error de conexión.';}
+  btn.disabled=false;
+}
+
+// ══════════════════════════════════════════════════════════════
+// PROPUESTA DE CAMBIO DE RUTINA (el coach pregunta antes de cambiar)
+// ══════════════════════════════════════════════════════════════
+
+async function checkForRoutineProposal(){
+  if(S.diary.length < 2) return;
+  // Count persistent weaknesses across last 6 entries
+  const weakCounts={};
+  S.diary.slice(0,6).forEach(e=>{ e.weaks.forEach(w=>{ weakCounts[w]=(weakCounts[w]||0)+1; }); });
+  const persistent=Object.entries(weakCounts).filter(([,v])=>v>=2).map(([k])=>k);
+  if(!persistent.length) return;
+  // Don't re-propose if already pending or recently dismissed
+  if(S.pendingProposal) return;
+  if(S.lastProposalTs && (Date.now()-S.lastProposalTs) < 86400000*3) return; // Wait 3 days between proposals
+
+  const prompt=`Eres un entrenador S&C para BJJ. El atleta lleva varias sesiones reportando estas debilidades PERSISTENTES: ${persistent.join(', ')}.
+
+Rutina gym actual:
+- LUNES: Hip thrust (Smith), Remo unilateral, Búlgara, Press inclinado + Core: Pallof, Woodchop
+- MIÉRCOLES: Zercher squat, Jalón al pecho, RDL, Press de hombro + Core: Pallof paso, Jalón bajo
+- FINISHER: Bicicleta intervalos
+
+¿Propones un ajuste concreto? Si sí: qué cambiarías, por qué (fundamento en 1-2 líneas), y qué sustituirías. Si la rutina ya atiende bien esas debilidades, di exactamente "NO_CHANGE". Máx 100 palabras. Español.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const txt=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'';
+    if(txt && !txt.includes('NO_CHANGE')){
+      S.pendingProposal={proposal:txt, weaknesses:persistent, ts:Date.now()};
+      S.lastProposalTs=Date.now();
+      SAVE();
+      // Show badge on gym tab
+      const gymTab=document.querySelectorAll('.tab')[1];
+      if(gymTab && !gymTab.querySelector('.proposal-dot')){
+        const dot=document.createElement('span');
+        dot.className='proposal-dot';
+        dot.style.cssText='display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;margin-left:4px;vertical-align:middle';
+        gymTab.appendChild(dot);
+      }
+    }
+  }catch(e){}
+}
+
+function renderProposalIfPending(){
+  if(!S.pendingProposal) return;
+  if(document.getElementById('proposal-banner')) return;
+  const p=S.pendingProposal;
+  const banner=document.createElement('div');
+  banner.id='proposal-banner';
+  banner.className='banner b-gold';
+  banner.style.cssText='margin-bottom:14px;border-width:2px';
+  banner.innerHTML=`<div class="b-icon">🤖</div>
+  <div style="flex:1">
+    <div class="b-title">⚠️ Coach propone un ajuste a tu rutina — tú decides</div>
+    <div class="b-text" style="margin-bottom:8px">
+      <strong>Patrón detectado:</strong> ${p.weaknesses.join(', ')} aparecen de forma recurrente en tu diario BJJ.<br><br>
+      <strong>Propuesta:</strong> ${p.proposal}
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-gold btn-sm" onclick="acceptProposal()">✓ Aplicar — abrir adaptador</button>
+      <button class="btn btn-ghost btn-sm" onclick="dismissProposal()">✕ Ignorar por ahora</button>
+    </div>
+  </div>`;
+  const content=document.getElementById('workout-content');
+  if(content) content.parentNode.insertBefore(banner, content);
+}
+
+function acceptProposal(){
+  toast('Abre "Mis Gyms → Adaptar" para generar la sesión con el ajuste','var(--gold)',4000);
+  dismissProposal();
+}
+
+function dismissProposal(){
+  delete S.pendingProposal;
+  SAVE();
+  const b=document.getElementById('proposal-banner');
+  if(b) b.remove();
+  document.querySelectorAll('.proposal-dot').forEach(d=>d.remove());
+}
 // ══════════════════════════════════════════════════════════════
 
 function renderGyms(){
@@ -1299,7 +1614,7 @@ async function runGymAdapt(id){
   const dayLabel=day==='lunes'?'Lunes (Lower Dominant + Pull Horizontal)':'Miércoles (Knee Dominant + Pull Vertical)';
   const bjjCtx=S.diary.slice(0,3).map(e=>`${e.date}: mal=${e.weaks.join(',')}`).join('; ');
   const out=document.getElementById('adapt-result-'+id);
-  out.textContent='Generando...';
+  out.innerHTML=`<div style="color:var(--muted);font-size:12px;font-style:italic">Generando rutina adaptada...</div>`;
 
   const prompt=`Eres un entrenador S&C para BJJ competitivo. Atleta: 27 años, 65 kg, intermedio Gi+No-Gi, competencia 6 Jun 2026.
 
@@ -1310,18 +1625,62 @@ Fuerza secundaria: ${day==='lunes'?'Búlgara, Press inclinado':'RDL mancuernas, 
 Finisher: Bicicleta estacionaria
 
 Equipamiento disponible en ${g.name}: ${g.equip}
-
 Historial BJJ reciente (debilidades): ${bjjCtx||'Sin datos'}
 
-Adapta la rutina. Mantén: Respiración/Movilidad → Core → Fuerza Principal A1/A2 (con tempo) → Fuerza Secundaria B1/B2 → Finisher cardio.
-Para cada ejercicio: Nombre → sets×reps → tempo (si aplica) → ejecución 1 línea → conexión BJJ 1 línea.
-Sin calistenia, sin anillas en el gym, sin burpees. Solo equipo convencional disponible. Español. Máx 280 palabras.`;
+Genera la rutina adaptada con EXACTAMENTE este formato JSON (solo el JSON, nada más):
+{
+  "bloques": [
+    {
+      "numero": "1",
+      "nombre": "Respiración y Movilidad",
+      "duracion": "8–10 min",
+      "ejercicios": [
+        {"nombre": "...", "detalle": "...", "ejecucion": "...", "bjj": "..."}
+      ]
+    }
+  ]
+}
+Incluye bloques: 1-Movilidad, 2-Core, 3-Fuerza Principal (A1/A2 con tempo), 4-Fuerza Secundaria (B1/B2), 5-Finisher cardio.
+Sin calistenia, sin anillas en gym, sin burpees. Solo equipo disponible. En español.`;
 
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:prompt}]})});
     const data=await res.json();
-    out.textContent=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'Error.';
-  }catch(e){out.textContent='Error de conexión.';}
+    const raw=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'{}';
+    try{
+      const clean=raw.replace(/```json|```/g,'').trim();
+      const parsed=JSON.parse(clean);
+      out.innerHTML=renderAdaptedRoutine(parsed, g.name, phName, dayLabel);
+    }catch(e){
+      // Fallback: plain text if JSON fails
+      out.innerHTML=`<div style="white-space:pre-wrap;font-size:12px;color:#CCC;line-height:1.6">${raw}</div>`;
+    }
+  }catch(e){out.innerHTML='<div style="color:var(--red-bright);font-size:12px">Error de conexión.</div>';}
+}
+
+function renderAdaptedRoutine(data, gymName, phase, dayLabel){
+  if(!data.bloques) return '<div style="color:var(--muted);font-size:12px">No se pudo generar la rutina.</div>';
+  let h = `<div style="margin-bottom:12px">
+    <div style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;letter-spacing:2px;color:var(--red-bright)">${gymName}</div>
+    <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">${phase} · ${dayLabel}</div>
+  </div>`;
+  data.bloques.forEach(bloque=>{
+    h+=`<div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:16px 0 8px;display:flex;align-items:center;gap:8px">
+      ${bloque.numero} — ${bloque.nombre}${bloque.duracion?` · ${bloque.duracion}`:''}
+      <span style="flex:1;height:1px;background:var(--border);display:block"></span>
+    </div>`;
+    bloque.ejercicios?.forEach(ex=>{
+      h+=`<div class="ex-card" style="margin-bottom:8px">
+        <div class="ex-name-bar"><span class="ex-name">${ex.nombre}</span></div>
+        ${ex.detalle?`<div class="ex-meta"><span class="chip">${ex.detalle}</span></div>`:''}
+        <div class="ex-body">
+          ${ex.ejecucion?`<div class="ex-lbl">Ejecución</div><div class="ex-text">${ex.ejecucion}</div>`:''}
+          ${ex.bjj?`<div class="bjj-note">🥋 ${ex.bjj}</div>`:''}
+        </div>
+      </div>`;
+    });
+  });
+  return h;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1342,7 +1701,6 @@ function toast(msg,color,dur=2500){
 LOAD();
 tick();
 setInterval(tick,60000);
-// Register Service Worker for offline support
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }

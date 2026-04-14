@@ -1,10 +1,11 @@
-const CACHE = 'bjj-coach-v1';
+const CACHE = 'bjj-coach-v2';
+const BASE = '/bjj-coach';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
+  BASE + '/',
+  BASE + '/index.html',
+  BASE + '/manifest.json',
+  BASE + '/icon-192.png',
+  BASE + '/icon-512.png',
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap'
 ];
 
@@ -39,10 +40,7 @@ self.addEventListener('fetch', e => {
           caches.open(CACHE).then(c => c.put(e.request, clone));
         }
         return response;
-      }).catch(() => {
-        // If offline and not cached, return index.html as fallback
-        return caches.match('/index.html');
-      });
+      }).catch(() => caches.match(BASE + '/index.html'));
     })
   );
 });
