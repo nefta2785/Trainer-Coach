@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>BJJ Coach v3 — Latin American Open 2026</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BJJ Coach">
+<meta name="theme-color" content="#0E0E0E">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --red:#C0392B;--red-bright:#E74C3C;--gold:#D4A017;
+  --bg:#0E0E0E;--surface:#161616;--surface2:#1E1E1E;--surface3:#252525;
+  --border:#2A2A2A;--text:#EFEFEF;--muted:#777;--success:#27AE60;--blue:#2980B9;--purple:#8E44AD;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh}
+/* HEADER */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--red-bright)}
+.logo-sub{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.badge{background:var(--red);color:#fff;font-family:'DM Mono',monospace;font-size:11px;padding:5px 11px;border-radius:4px;letter-spacing:1px}
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 14px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 13px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;font-weight:600}
+.tab.active{color:var(--red-bright);border-bottom-color:var(--red-bright)}
+.tab:hover{color:var(--text)}
+/* LAYOUT */
+.main{padding:14px 18px;max-width:900px;margin:0 auto}
+.page{display:none}.page.active{display:block}
+/* WEEK BAR */
+.week-bar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px}
+.wd{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 4px;text-align:center;cursor:pointer;transition:all .2s}
+.wd.today{border-color:var(--gold);background:rgba(212,160,23,.12)}
+.wd.gym{border-color:var(--red);background:rgba(192,57,43,.1)}
+.wd.bjj{border-color:var(--blue);background:rgba(41,128,185,.1)}
+.wd.cal{border-color:var(--purple);background:rgba(142,68,173,.1)}
+.wd.rest{border-color:var(--border);opacity:.5}
+.wd-name{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.wd-icon{font-size:14px;margin:2px 0}
+.wd-label{font-size:8px;color:var(--muted);font-weight:600}
+/* PHASE BAR */
+.phase-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px}
+.ph-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:9px;cursor:pointer;text-align:center;transition:all .2s}
+.ph-btn.active{border-color:var(--red);background:rgba(192,57,43,.15)}
+.ph-label{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.ph-name{font-size:11px;font-weight:600;margin-top:2px}
+.ph-weeks{font-size:8px;color:var(--gold);margin-top:1px;font-family:'DM Mono',monospace}
+/* DAY SEL */
+.day-sel{display:flex;gap:6px;margin-bottom:14px}
+.day-btn{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:11px;cursor:pointer;text-align:center;transition:all .2s}
+.day-btn.active{border-color:var(--gold);background:rgba(212,160,23,.1)}
+.day-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px}
+.day-sub{font-size:9px;color:var(--muted);margin-top:1px}
+/* SECTION HDR */
+.shdr{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:16px 0 9px;display:flex;align-items:center;gap:8px}
+.shdr::after{content:'';flex:1;height:1px;background:var(--border)}
+/* BANNERS */
+.banner{border-radius:8px;padding:11px 13px;margin-bottom:12px;display:flex;gap:10px;align-items:flex-start}
+.b-gold{background:rgba(212,160,23,.08);border:1px solid rgba(212,160,23,.25)}
+.b-red{background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.25)}
+.b-blue{background:rgba(41,128,185,.08);border:1px solid rgba(41,128,185,.25)}
+.b-green{background:rgba(39,174,96,.08);border:1px solid rgba(39,174,96,.25)}
+.b-purple{background:rgba(142,68,173,.08);border:1px solid rgba(142,68,173,.25)}
+.b-icon{font-size:17px;flex-shrink:0;margin-top:1px}
+.b-title{font-size:11px;font-weight:600;margin-bottom:3px}
+.b-gold .b-title{color:var(--gold)}
+.b-red .b-title{color:var(--red-bright)}
+.b-blue .b-title{color:#5DADE2}
+.b-green .b-title{color:#58D68D}
+.b-purple .b-title{color:#BB8FCE}
+.b-text{font-size:12px;color:#BBB;line-height:1.5}
+/* REGAÑO */
+.regano{background:rgba(192,57,43,.12);border:2px solid var(--red);border-radius:8px;padding:12px 14px;margin-bottom:14px;display:none}
+.regano.show{display:block}
+.regano-txt{font-size:13px;color:var(--red-bright);font-weight:600;line-height:1.5}
+.regano-sub{font-size:11px;color:#CCC;margin-top:4px}
+/* WARMUP */
+.wu-table{background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:12px}
+.wu-row{display:grid;grid-template-columns:160px 1fr;padding:8px 13px;border-bottom:1px solid var(--border);gap:10px;align-items:center}
+.wu-row:last-child{border-bottom:none}
+.wu-hdr{background:var(--surface3);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+/* EX CARD */
+.ex-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:9px;transition:border-color .2s}
+.ex-card.logged{border-color:var(--success)}.ex-card.swapped{border-color:rgba(212,160,23,.5)}
+.ex-name-bar{background:var(--surface3);padding:8px 13px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ex-name{font-size:13px;font-weight:600}
+.ex-meta{display:flex;gap:5px;padding:7px 13px;flex-wrap:wrap}
+.chip{background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);color:var(--red-bright);font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border-radius:3px}
+.chip.gold{background:rgba(212,160,23,.1);border-color:rgba(212,160,23,.3);color:var(--gold)}
+.chip.purple{background:rgba(142,68,173,.15);border-color:rgba(142,68,173,.3);color:#BB8FCE}
+.ex-body{padding:0 13px 9px}
+.ex-lbl{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:7px 0 2px;font-weight:600}
+.ex-text{font-size:12px;line-height:1.5;color:#CCC}
+.bjj-note{font-size:10px;color:var(--gold);font-weight:500;margin-top:5px;padding-top:5px;border-top:1px solid var(--border)}
+/* LOG */
+.log-sec{padding:9px 13px 11px;border-top:1px solid var(--border);display:flex;gap:7px;align-items:flex-end;flex-wrap:wrap}
+.lf{display:flex;flex-direction:column;gap:3px}
+.lf label{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.lf input{background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:5px 8px;outline:none;width:70px;transition:border-color .2s}
+.lf input.wide{width:120px}
+.lf input:focus{border-color:var(--red)}
+.log-btn{background:var(--red);border:none;border-radius:4px;color:#fff;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;padding:7px 13px;cursor:pointer;white-space:nowrap;transition:background .2s}
+.log-btn:hover{background:var(--red-bright)}
+.log-hist{padding:0 13px 7px}
+.lhe{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
+.lhe:last-child{border-bottom:none}.lhe .v{color:var(--text)}
+/* FINISHER */
+.fin-card{background:linear-gradient(135deg,rgba(192,57,43,.18),rgba(192,57,43,.04));border:1px solid rgba(192,57,43,.4);border-radius:8px;padding:13px;margin-bottom:16px}
+.fin-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--red-bright);margin-bottom:7px}
+.fin-row{display:flex;align-items:baseline;gap:7px;margin-top:4px;font-size:12px;color:#CCC}
+.fin-dot{width:4px;height:4px;background:var(--red);border-radius:50%;flex-shrink:0;margin-top:5px}
+/* SWAP */
+.swap-btn{background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:10px;padding:2px 8px;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.swap-btn:hover{border-color:var(--gold);color:var(--gold)}
+.swap-panel{display:none;border-top:1px solid var(--border);background:rgba(212,160,23,.03);padding:11px 13px}
+.swap-panel.open{display:block}
+.swap-opt{background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:9px 11px;margin-bottom:7px;cursor:pointer;transition:border-color .2s}
+.swap-opt:hover{border-color:var(--gold)}.swap-opt:last-child{margin-bottom:0}
+.so-name{font-size:12px;font-weight:600;margin-bottom:2px}
+.so-meta{font-size:9px;color:var(--red-bright);font-family:'DM Mono',monospace;margin-bottom:2px}
+.so-exec{font-size:11px;color:#AAA;line-height:1.4}
+.so-bjj{font-size:10px;color:var(--gold);margin-top:3px;font-weight:500}
+.so-sel{display:inline-block;margin-top:4px;background:var(--gold);color:#000;font-size:9px;font-weight:700;padding:2px 8px;border-radius:3px}
+/* CAL CARDS */
+.cal-level{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.cal-btn{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 13px;font-size:11px;cursor:pointer;transition:all .2s}
+.cal-btn.active{border-color:var(--purple);color:#BB8FCE;background:rgba(142,68,173,.15)}
+/* STATS */
+.stats-g{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:14px}
+.stat-c{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px;text-align:center}
+.stat-n{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--red-bright);line-height:1}
+.stat-l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.pbar-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px;margin-bottom:9px}
+.pbar-lbl{display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px}
+.pbar-lbl span{color:var(--muted)}
+.pbar-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--red-bright));border-radius:3px;transition:width .5s ease}
+.hist-t{background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.hr-row{display:grid;grid-template-columns:1fr 65px 50px 50px 85px;padding:8px 13px;border-bottom:1px solid var(--border);font-size:11px;align-items:center;gap:5px}
+.hr-row:last-child{border-bottom:none}
+.hr-hdr{background:var(--surface3);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+/* DIARY */
+.diary-entry{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:13px;margin-bottom:9px}
+.de-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.de-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
+.de-type{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.de-type.gi{color:var(--gold)}.de-type.nogi{color:#5DADE2}.de-type.comp{color:var(--red-bright)}.de-type.drilling{color:var(--success)}
+.de-text{font-size:12px;color:#CCC;line-height:1.5;margin-bottom:7px}
+.de-tags{display:flex;gap:5px;flex-wrap:wrap}
+.de-tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500}
+.de-tag.ok{background:rgba(39,174,96,.12);color:#58D68D;border:1px solid rgba(39,174,96,.3)}
+.de-tag.weak{background:rgba(192,57,43,.12);color:var(--red-bright);border:1px solid rgba(192,57,43,.3)}
+/* GYM */
+.gym-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.gym-card-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--surface3)}
+.gym-card-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px}
+.gym-img{width:100%;max-height:200px;object-fit:cover;display:block}
+.gym-equip{font-size:12px;color:#BBB;line-height:1.6;padding:12px 14px;white-space:pre-wrap}
+.gym-edit-area{width:100%;background:var(--bg);border:none;border-top:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;padding:10px 14px;outline:none;resize:vertical;min-height:80px;display:none}
+.gym-edit-area.open{display:block}
+.gym-adapt-result{padding:12px 14px;font-size:12px;color:#CCC;line-height:1.6;display:none;border-top:1px solid var(--border);white-space:pre-wrap}
+.gym-adapt-result.show{display:block}
+.gym-ai-equip{padding:12px 14px;font-size:12px;color:#CCC;line-height:1.6;display:none;border-top:1px solid var(--border);background:rgba(142,68,173,.05)}
+.gym-ai-equip.show{display:block}
+/* IMG UPLOAD */
+.img-upload-zone{border:2px dashed var(--border);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:10px}
+.img-upload-zone:hover{border-color:var(--gold)}
+.img-upload-zone input{display:none}
+.img-preview{width:100%;max-height:180px;object-fit:cover;border-radius:6px;display:none;margin-bottom:8px}
+/* FORMS */
+.fg{margin-bottom:11px}
+.fl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px;display:block;font-weight:600}
+.fi{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 11px;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--red)}
+.fta{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 11px;outline:none;resize:vertical;min-height:80px;transition:border-color .2s}
+.fta:focus{border-color:var(--red)}
+.fsel{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 11px;outline:none;cursor:pointer}
+/* TAGS */
+.tag-grid{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px}
+.tc{display:none}
+.tl{font-size:10px;padding:3px 9px;border-radius:10px;border:1px solid var(--border);cursor:pointer;transition:all .2s;color:var(--muted);user-select:none}
+.tc:checked+.tl{border-color:var(--red);color:var(--red-bright);background:rgba(192,57,43,.1)}
+/* DEF GRID */
+.def-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px}
+.def-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px}
+.def-prob{font-size:10px;color:var(--red-bright);font-weight:600;margin-bottom:4px}
+.def-sol{font-size:11px;color:#BBB;line-height:1.5}
+/* BTNS */
+.btn{border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;padding:7px 14px;cursor:pointer;transition:all .2s}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:var(--red-bright)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-ghost:hover{border-color:var(--muted);color:var(--text)}
+.btn-gold{background:var(--gold);color:#000}.btn-gold:hover{background:#E8B420}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:#3498DB}
+.btn-purple{background:var(--purple);color:#fff}.btn-purple:hover{background:#9B59B6}
+.btn-sm{padding:4px 10px;font-size:10px}
+.btn-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+/* TOAST */
+.toast{position:fixed;bottom:18px;right:18px;color:#fff;padding:9px 16px;border-radius:6px;font-size:12px;font-weight:600;transform:translateY(60px);opacity:0;transition:all .3s;z-index:999;max-width:280px}
+.toast.show{transform:translateY(0);opacity:1}
+/* AI LOADING */
+.ai-loading{color:var(--muted);font-size:12px;font-style:italic}
+/* SCROLL */
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+@media(max-width:600px){
+  .stats-g{grid-template-columns:repeat(2,1fr)}
+  .def-grid{grid-template-columns:1fr}
+  .hr-row{grid-template-columns:1fr 55px 45px}
+  .hr-row span:nth-child(4),.hr-row span:nth-child(5){display:none}
+  .wu-row{grid-template-columns:1fr;gap:2px}
+  .week-bar{gap:3px}
+  .wd-label{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <div class="logo">BJJ COACH</div>
+    <div class="logo-sub">Latin American Open · 6 Jun 2026</div>
+  </div>
+  <div class="badge" id="countdown">-- DÍAS</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="nav('semana',this)">Semana</div>
+  <div class="tab" onclick="nav('gym',this)">Gym</div>
+  <div class="tab" onclick="nav('calistenia',this)">Calistenia</div>
+  <div class="tab" onclick="nav('progresion',this)">Progresión</div>
+  <div class="tab" onclick="nav('diario',this)">Diario BJJ</div>
+  <div class="tab" onclick="nav('coach',this)">Coach</div>
+  <div class="tab" onclick="nav('gyms',this)">Mis Gyms</div>
+</div>
+
+<div class="main">
+
+<!-- ══════════════ SEMANA ══════════════ -->
+<div id="page-semana" class="page active">
+  <div id="regano" class="regano">
+    <div class="regano-txt" id="regano-txt"></div>
+    <div class="regano-sub" id="regano-sub"></div>
+  </div>
+
+  <div class="shdr">Tu semana de entrenamiento</div>
+  <div class="week-bar" id="week-bar"></div>
+
+  <div class="shdr">Contexto del día de hoy</div>
+  <div id="today-context"></div>
+
+  <div class="shdr">Reglas de carga — semana cargada</div>
+  <div class="banner b-red">
+    <div class="b-icon">⚠️</div>
+    <div>
+      <div class="b-title">Tu semana es de alto volumen — respeta estas reglas</div>
+      <div class="b-text">
+        • <strong>Lunes — Gym</strong>: S&C máximo 60 min (6–7pm). Sesión fullbody lower dominant. Entra y sal eficiente.<br>
+        • <strong>Martes — BJJ Gi</strong>: Recuperación activa. Sin gym. Deja que el cuerpo absorba el S&C del lunes.<br>
+        • <strong>Miércoles — Gym</strong>: S&C máximo 60 min (6–7pm). Sesión fullbody knee dominant. El día de home office te da mejor recuperación previa.<br>
+        • <strong>Jueves — BJJ No-Gi + Thai Boxing</strong>: Doble sesión back to back — el cuerpo necesita energía, no fatiga acumulada del gym.<br>
+        • <strong>Viernes — Open Mat Gi</strong>: Llega fresco. Es el entrenamiento más libre y valioso de la semana.<br>
+        • <strong>Sábado</strong>: Descanso total o movilidad ligera. Sin carga.<br>
+        • <strong>Domingo — Calistenia Barras Heroes</strong>: El único día de trabajo físico sin BJJ. Módulo separado.
+      </div>
+    </div>
+  </div>
+
+  <div class="shdr">Cambiar horario del día</div>
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div class="fg" style="margin:0">
+        <label class="fl">Día</label>
+        <select class="fsel" id="sched-day">
+          <option value="lunes">Lunes</option>
+          <option value="martes">Martes</option>
+          <option value="miercoles">Miércoles</option>
+          <option value="jueves">Jueves</option>
+          <option value="viernes">Viernes</option>
+          <option value="sabado">Sábado</option>
+          <option value="domingo">Domingo</option>
+        </select>
+      </div>
+      <div class="fg" style="margin:0">
+        <label class="fl">Cambio</label>
+        <select class="fsel" id="sched-change">
+          <option value="cancelled">Sesión cancelada</option>
+          <option value="moved-early">Movida a mañana</option>
+          <option value="moved-late">Movida a noche</option>
+          <option value="added-gym">Agregué gym hoy</option>
+          <option value="extra-bjj">Clase extra de BJJ</option>
+          <option value="rest">Día de descanso</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fl">Nota (opcional)</label>
+      <input class="fi" id="sched-note" placeholder="Ej: El gym estaba cerrado, fui al parque...">
+    </div>
+    <button class="btn btn-red" onclick="saveScheduleChange()">Registrar cambio</button>
+  </div>
+
+  <div id="sched-changes-list" style="margin-top:10px"></div>
+</div>
+
+<!-- ══════════════ GYM ══════════════ -->
+<div id="page-gym" class="page">
+  <div id="gym-regano" class="regano"></div>
+
+  <div class="phase-bar">
+    <div class="ph-btn active" onclick="setPhase(1,this)">
+      <div class="ph-label">Fase 1</div>
+      <div class="ph-name">Fuerza Base</div>
+      <div class="ph-weeks">Sem 1–3 · 14 Abr–4 May</div>
+    </div>
+    <div class="ph-btn" onclick="setPhase(2,this)">
+      <div class="ph-label">Fase 2</div>
+      <div class="ph-name">Potencia + Cardio</div>
+      <div class="ph-weeks">Sem 4–6 · 5–25 May</div>
+    </div>
+    <div class="ph-btn" onclick="setPhase(3,this)">
+      <div class="ph-label">Fase 3</div>
+      <div class="ph-name">Afilamiento</div>
+      <div class="ph-weeks">Sem 7–8 · 26 May–5 Jun</div>
+    </div>
+  </div>
+
+  <div class="day-sel">
+    <div class="day-btn active" onclick="setDay('lunes',this)">
+      <div class="day-title">LUNES</div>
+      <div class="day-sub">Lower Dominant + Pull Horizontal</div>
+    </div>
+    <div class="day-btn" onclick="setDay('miercoles',this)">
+      <div class="day-title">MIÉRCOLES</div>
+      <div class="day-sub">Knee Dominant + Pull Vertical</div>
+    </div>
+  </div>
+
+  <div class="banner b-gold" id="phase-banner">
+    <div class="b-icon">📋</div>
+    <div>
+      <div class="b-title" id="pb-title">FASE 1 — FUERZA BASE</div>
+      <div class="b-text" id="pb-text"></div>
+    </div>
+  </div>
+
+  <div id="smart-rec" style="display:none"></div>
+  <div id="workout-content"></div>
+</div>
+
+<!-- ══════════════ CALISTENIA ══════════════ -->
+<div id="page-calistenia" class="page">
+  <div class="banner b-purple">
+    <div class="b-icon">🏋️</div>
+    <div>
+      <div class="b-title">Módulo Calistenia — Barras Heroes · Domingos</div>
+      <div class="b-text">Separado del gym. Progresión propia con el equipamiento de las barras. Nivel actual: básico/intermedio (~5 dominadas). Equipo: anillas altas, anillas bajas (30cm), barra alta/media/baja, paralelas cortas.</div>
+    </div>
+  </div>
+
+  <div class="shdr">Nivel actual</div>
+  <div class="cal-level">
+    <div class="cal-btn active" id="cal-b" onclick="setCalLevel('basico',this)">🥉 Básico/Intermedio</div>
+    <div class="cal-btn" id="cal-i" onclick="setCalLevel('intermedio',this)">🥈 Intermedio</div>
+    <div class="cal-btn" id="cal-a" onclick="setCalLevel('avanzado',this)">🥇 Avanzado</div>
+  </div>
+
+  <div id="cal-content"></div>
+</div>
+
+<!-- ══════════════ PROGRESIÓN ══════════════ -->
+<div id="page-progresion" class="page">
+  <div class="stats-g">
+    <div class="stat-c"><div class="stat-n" id="st-ses">0</div><div class="stat-l">Sesiones gym</div></div>
+    <div class="stat-c"><div class="stat-n" id="st-ex">0</div><div class="stat-l">Ejercicios</div></div>
+    <div class="stat-c"><div class="stat-n" id="st-bjj">0</div><div class="stat-l">Entradas BJJ</div></div>
+    <div class="stat-c"><div class="stat-n" id="st-dias">54</div><div class="stat-l">Días al torneo</div></div>
+  </div>
+  <div class="pbar-wrap">
+    <div class="pbar-lbl"><strong>Preparación al torneo</strong><span id="pbar-pct">0%</span></div>
+    <div class="pbar-track"><div class="pbar-fill" id="pbar" style="width:0%"></div></div>
+  </div>
+  <div class="shdr">Historial de cargas</div>
+  <div class="hist-t">
+    <div class="hr-row hr-hdr"><span>Ejercicio</span><span>Peso</span><span>Reps</span><span>Sets</span><span>Fecha</span></div>
+    <div id="hist-body"><div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">Loguea tu primera sesión.</div></div>
+  </div>
+</div>
+
+<!-- ══════════════ DIARIO BJJ ══════════════ -->
+<div id="page-diario" class="page">
+  <div class="banner b-gold">
+    <div class="b-icon">📓</div>
+    <div>
+      <div class="b-title">Diario BJJ — Alimenta al coach</div>
+      <div class="b-text">Registra cómo te fue en el mat. El coach analiza patrones, identifica debilidades recurrentes y las integra en tus rutinas de gym y calistenia. Entre más detalle, mejor la recomendación.</div>
+    </div>
+  </div>
+
+  <div class="shdr">Nueva entrada</div>
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:14px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+      <div class="fg" style="margin:0">
+        <label class="fl">Tipo</label>
+        <select class="fsel" id="d-type">
+          <option value="gi">Gi — Martes</option>
+          <option value="nogi">No-Gi — Jueves</option>
+          <option value="gi">Open Mat Gi — Viernes</option>
+          <option value="comp">Competencia</option>
+          <option value="drilling">Drilling</option>
+        </select>
+      </div>
+      <div class="fg" style="margin:0">
+        <label class="fl">Duración (min)</label>
+        <input class="fi" type="number" id="d-dur" placeholder="60">
+      </div>
+      <div class="fg" style="margin:0">
+        <label class="fl">Energía general</label>
+        <select class="fsel" id="d-energy">
+          <option value="alta">Alta 🔥</option>
+          <option value="media" selected>Media ⚡</option>
+          <option value="baja">Baja 😴</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fl">¿Cómo te fue? Cuéntame todo</label>
+      <textarea class="fta" id="d-text" placeholder="Ej: Me costó el guard passing hoy, no pude pasar a nadie que estuviera en riva. Estuve bien en las barridas desde X guard pero me atascaron varias veces. El cardio aguantó mejor. Intenté el arco y flecha dos veces y falló..."></textarea>
+    </div>
+    <div class="fg">
+      <label class="fl">✅ ¿Qué estuvo bien?</label>
+      <div class="tag-grid">
+        <input type="checkbox" class="tc" id="ok-cardio"><label class="tl" for="ok-cardio">Cardio</label>
+        <input type="checkbox" class="tc" id="ok-guard"><label class="tl" for="ok-guard">Guard</label>
+        <input type="checkbox" class="tc" id="ok-passing"><label class="tl" for="ok-passing">Passing</label>
+        <input type="checkbox" class="tc" id="ok-sweep"><label class="tl" for="ok-sweep">Barridas</label>
+        <input type="checkbox" class="tc" id="ok-sub"><label class="tl" for="ok-sub">Submissions</label>
+        <input type="checkbox" class="tc" id="ok-grip"><label class="tl" for="ok-grip">Grip</label>
+        <input type="checkbox" class="tc" id="ok-exp"><label class="tl" for="ok-exp">Explosividad</label>
+        <input type="checkbox" class="tc" id="ok-mind"><label class="tl" for="ok-mind">Mindset</label>
+      </div>
+    </div>
+    <div class="fg" style="margin-bottom:12px">
+      <label class="fl">❌ ¿Qué necesita mejorar?</label>
+      <div class="tag-grid">
+        <input type="checkbox" class="tc" id="w-cardio"><label class="tl" for="w-cardio">Cardio</label>
+        <input type="checkbox" class="tc" id="w-guard"><label class="tl" for="w-guard">Guard ret.</label>
+        <input type="checkbox" class="tc" id="w-passing"><label class="tl" for="w-passing">Passing</label>
+        <input type="checkbox" class="tc" id="w-sweep"><label class="tl" for="w-sweep">Barridas</label>
+        <input type="checkbox" class="tc" id="w-grip"><label class="tl" for="w-grip">Grip</label>
+        <input type="checkbox" class="tc" id="w-exp"><label class="tl" for="w-exp">Explosividad</label>
+        <input type="checkbox" class="tc" id="w-riva"><label class="tl" for="w-riva">Guardia riva</label>
+        <input type="checkbox" class="tc" id="w-mount"><label class="tl" for="w-mount">Montada</label>
+        <input type="checkbox" class="tc" id="w-arco"><label class="tl" for="w-arco">Arco y flecha</label>
+        <input type="checkbox" class="tc" id="w-barra"><label class="tl" for="w-barra">Barras</label>
+        <input type="checkbox" class="tc" id="w-fatiga"><label class="tl" for="w-fatiga">Fatiga musc.</label>
+        <input type="checkbox" class="tc" id="w-calambre"><label class="tl" for="w-calambre">Calambres</label>
+        <input type="checkbox" class="tc" id="w-mind"><label class="tl" for="w-mind">Mindset</label>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-red" onclick="saveDiary()">Guardar entrada</button>
+      <button class="btn btn-blue" onclick="aiDiaryRec()" id="ai-rec-btn">🤖 Analizar y recomendar</button>
+    </div>
+    <div id="ai-rec-out" style="margin-top:10px;display:none;background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:12px;color:#CCC;line-height:1.6;white-space:pre-wrap"></div>
+  </div>
+
+  <div class="shdr">Entradas anteriores</div>
+  <div id="diary-list"><div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">Sin entradas aún.</div></div>
+</div>
+
+<!-- ══════════════ COACH ══════════════ -->
+<div id="page-coach" class="page">
+  <div class="banner b-red">
+    <div class="b-icon">⚡</div>
+    <div>
+      <div class="b-title">ELECTROLITOS — Basado en PMC/GSSI</div>
+      <div class="b-text">Tus calambres son principalmente <strong>fatiga neuromuscular</strong>, no solo sal. Tomar agua sola post-esfuerzo <em>aumenta</em> la susceptibilidad. Usa bebida con sodio+potasio+glucosa antes y durante el torneo.</div>
+    </div>
+  </div>
+  <div class="shdr">Deficiencias identificadas</div>
+  <div class="def-grid">
+    <div class="def-card"><div class="def-prob">⚠️ Calambres cuádriceps</div><div class="def-sol">TUT 4-1-X-0 en búlgara + progresión de cardio. Electrolitos antes del torneo.</div></div>
+    <div class="def-card"><div class="def-prob">⚠️ Cardio insuficiente</div><div class="def-sol">Fase 1: bici zona 2. Fase 2: HIIT 30/30. Fase 3: activación. Progresión de 8 semanas.</div></div>
+    <div class="def-card"><div class="def-prob">⚠️ Guardia de la riva</div><div class="def-sol">Hip thrust + búlgara = explosión de cadera y fuerza unilateral para pasar.</div></div>
+    <div class="def-card"><div class="def-prob">⚠️ Salida arco y flecha</div><div class="def-sol">Remo unilateral + jalón al pecho = fuerza de jale + visualización en warm-up.</div></div>
+    <div class="def-card"><div class="def-prob">⚠️ Defender barras</div><div class="def-sol">Grip training: farmer hold + curl Z. Fuerza isométrica de codo bajo fatiga.</div></div>
+    <div class="def-card"><div class="def-prob">⚠️ Control montada</div><div class="def-sol">Hip thrust + dominadas en calistenia = cadera arriba y tensión de jalón.</div></div>
+  </div>
+  <div class="shdr">Protocolo torneo</div>
+  <div class="banner b-gold" style="margin-bottom:8px"><div class="b-icon">🏆</div><div><div class="b-title">DÍA ANTES</div><div class="b-text">Hidratación alta con electrolitos. Cena: carbohidratos + proteína moderada. Sin entrenar. 8h de sueño mínimo. Visualiza tus escapes antes de dormir.</div></div></div>
+  <div class="banner b-red" style="margin-bottom:8px"><div class="b-icon">⚔️</div><div><div class="b-title">DÍA DEL TORNEO</div><div class="b-text">Desayuno 2-3h antes. Electrolitos 30 min antes de calentar. Entre matches: plátano + agua con electrolitos — NO agua sola. Warm-up 10 min antes de cada match.</div></div></div>
+  <div class="shdr">Sueño</div>
+  <div class="banner b-gold"><div class="b-icon">😴</div><div><div class="b-title">6h → objetivo 7.5h</div><div class="b-text">Con 6h de sueño: tiempo de reacción degradado, síntesis proteica -18%, cortisol elevado. Tres factores críticos para un grappler. Acuéstate 30 min antes esta semana.</div></div></div>
+</div>
+
+<!-- ══════════════ MIS GYMS ══════════════ -->
+<div id="page-gyms" class="page">
+  <div class="banner b-gold">
+    <div class="b-icon">🏋️</div>
+    <div>
+      <div class="b-title">Mis Gyms — Edita, agrega fotos y adapta rutinas</div>
+      <div class="b-text">Sube una foto de tu gym y la IA identifica automáticamente el equipamiento disponible. Edita el inventario manualmente o deja que la IA lo detecte. Luego adapta tu rutina a ese equipo.</div>
+    </div>
+  </div>
+  <div class="shdr">Gyms guardados</div>
+  <div id="gyms-list"></div>
+  <div class="btn-row">
+    <button class="btn btn-red" onclick="showAddGym()">+ Agregar gym</button>
+  </div>
+  <div id="add-gym-form" style="display:none;margin-top:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px">
+    <div class="shdr" style="margin-top:0">Nuevo gym</div>
+    <div class="fg"><label class="fl">Nombre</label><input class="fi" id="ng-name" placeholder="Ej: Gym Norte, Sport City..."></div>
+    <div class="fg"><label class="fl">Equipamiento (o sube foto para auto-detectar)</label><textarea class="fta" id="ng-equip" placeholder="Ej: Mancuernas hasta 30 lb, banco plano, caminadora..."></textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-red" onclick="saveNewGym()">Guardar</button>
+      <button class="btn btn-ghost" onclick="cancelAddGym()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════════
+
+const COMP_DATE = new Date('2026-06-06T09:00:00');
+
+const WEEK_SCHEDULE = {
+  lunes:     {icon:'💪', label:'Gym', type:'gym',  color:'gym',  detail:'Gym Oasis 6–7pm'},
+  martes:    {icon:'🥋', label:'BJJ Gi', type:'bjj', color:'bjj', detail:'BJJ Gi 6–7pm'},
+  miercoles: {icon:'💪', label:'Gym', type:'gym',  color:'gym',  detail:'Gym Oasis 6–7pm'},
+  jueves:    {icon:'🥋', label:'BJJ+Thai', type:'bjj', color:'bjj', detail:'BJJ No-Gi 6–7pm · Thai Boxing 7–8pm — doble sesión intensa'},
+  viernes:   {icon:'🥋', label:'Open Mat', type:'bjj', color:'bjj', detail:'Open Mat Gi 7–8pm — rodada libre'},
+  sabado:    {icon:'😴', label:'Descanso', type:'rest', color:'rest', detail:'Recuperación activa o movilidad ligera'},
+  domingo:   {icon:'🤸', label:'Calistenia', type:'cal', color:'cal', detail:'Barras Heroes — módulo de calistenia'}
+};
+
+const DAY_NAMES_ES = ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
+
+const REGANOS = [
+  {txt:"Oye, ¿qué pasó? Llevas {days} días sin registrar nada.", sub:"El torneo no se mueve. El 6 de junio llega quieras o no. ¿Vas a llegar preparado o a improvisar de nuevo?"},
+  {txt:"Neta, {days} días sin registrar. ¿Te olvidaste que hay competencia?", sub:"No te voy a mentir: si no registras, no puedo ayudarte a mejorar. La constancia gana campeonatos, no el talento."},
+  {txt:"Bro, {days} días. Cualquier cosa que hagas en el mat sin preparación física es suerte, no habilidad.", sub:"Abre la app, registra lo que hagas, aunque sea poco. El hábito se construye aunque no tengas ganas."},
+  {txt:"¿{days} días? A ver, seamos honestos: ¿estás entrenando y no registrando, o simplemente no estás yendo?", sub:"Si hay algo que te está frenando — lesión, trabajo, vida — dímelo y ajustamos el plan. Pero desaparecer no es la solución."}
+];
+
+const PHASES = {
+  1:{title:'FASE 1 — FUERZA BASE',text:'Semanas 1–3. Construir fuerza máxima y base aeróbica. Domina los tempos, RPE honesto, no al fallo.',finL:{r:'8 rondas',p:'20s sprint / 40s recuperación',n:'Base aeróbica zona 2–3.'},finM:{r:'8 rondas',p:'30s sprint / 30s recuperación',n:'Tolerancia al lactato — ratio 1:1.'},sets:{main:'4',sec:'3–4'}},
+  2:{title:'FASE 2 — POTENCIA + CARDIO',text:'Semanas 4–6 (cumple 16 Mayo 🎂). Reduce volumen 20%, sube intensidad. Aquí se gana el torneo.',finL:{r:'10 rondas',p:'20s sprint ALL-OUT / 40s activo',n:'VO2max sube aquí.'},finM:{r:'10 rondas',p:'30s sprint ALL-OUT / 30s activo',n:'Umbral anaeróbico — te salva en el 4to match.'},sets:{main:'4',sec:'3'}},
+  3:{title:'FASE 3 — AFILAMIENTO',text:'Semanas 7–8. Reduce volumen 40%, mantén intensidad. Llegar fresco y agresivo el 6 de Junio.',finL:{r:'5 rondas',p:'20s sprint / 40s recuperación',n:'Solo activación.'},finM:{r:'5 rondas',p:'30s sprint / 30s activo',n:'Último estímulo antes del torneo.'},sets:{main:'3',sec:'3'}}
+};
+
+const WRK = {
+  lunes:{
+    warmup:[['90/90 Breathing','2 min → Visualiza el escape de Arco y Flecha'],['CARs cadera y hombro','5 reps por articulación, lento y controlado'],['Gato / Camello','10 ciclos sincronizados con la respiración']],
+    core:[
+      {id:'pallof_l',name:'Press Pallof',meta:['3×12 por lado','Polea media','RPE 7','Desc 30s'],exec:'De pie lateral a la polea. Extiende brazos al frente y regresa. El torso NO rota.',bjj:'Anti-rotación = resistir sweeps en half guard.'},
+      {id:'woodchop_l',name:'Jalón diagonal (Woodchop)',meta:['3×12 por lado','Polea alta','RPE 7'],exec:'Diagonal de hombro a cadera contraria. El torso gira controlado, la cadera frena.',bjj:'Core rotacional = transiciones y scrambles.'}
+    ],
+    main:[
+      {id:'hip_thrust',name:'A1. Empuje de cadera · Smith Machine',meta:['Tempo 3-2-X-2','RPE 8–9','Desc 90s'],exec:'Espalda en banco, barra sobre caderas con pad. Empuja hasta extensión completa. Pausa 2s arriba apretando glúteo.',bjj:'Base del bridge en guard y potencia de barridas.'},
+      {id:'remo_uni',name:'A2. Remo unilateral con mancuerna · Banco',meta:['Tempo X-1-3-1','35–45 lb','RPE 8–9'],exec:'Rodilla y mano apoyadas en banco. Codo hacia atrás y arriba. Baja lento 3s sin rotar el torso.',bjj:'Patrón de jale dominante en Gi — grip fighting y control de manga.'}
+    ],
+    sec:[
+      {id:'bulgara_l',name:'B1. Sentadilla dividida búlgara · Banco + Mancuernas',meta:['Tempo 4-1-X-0','Última: 15s isométrico','25–35 lb','RPE 8'],exec:'Pie trasero en banco. Baja verticalmente, rodilla delantera sobre el pie. Explosivo arriba.',bjj:'Fuerza unilateral = stand-ups desde guard y wrestling shots.'},
+      {id:'press_incl',name:'B2. Press inclinado con mancuernas · Banco',meta:['Tempo 3-1-X-1','RPE 7–8'],exec:'Banco 30–45°. Codos a 45° del torso. Baja hasta que los codos queden a altura del pecho.',bjj:'Framing y sprawls — empuje bajo presión.'}
+    ]
+  },
+  miercoles:{
+    warmup:[['90/90 Breathing','2 min → Visualiza entrada de Double Leg'],['CARs cadera y hombro','5 reps por articulación, lento y controlado'],['Perro / Cobra','8 ciclos, abre el pecho completamente en Cobra']],
+    core:[
+      {id:'pallof_m',name:'Press Pallof con paso lateral',meta:['3×12 pasos/lado','Polea media','RPE 7'],exec:'Agrega paso lateral entre cada rep. Estabilidad anti-rotacional en movimiento dinámico.',bjj:'Guard parado y wrestling — estabilidad lateral bajo desplazamiento.'},
+      {id:'jalon_bajo',name:'Jalón con polea baja',meta:['3×15','Polea baja, rope','RPE 7'],exec:'De pie frente a la polea baja. Jala hacia los costados de las caderas, brazos casi extendidos.',bjj:'Lats y core integrados = posición en guard y control de distancia.'}
+    ],
+    main:[
+      {id:'zercher',name:'A1. Sentadilla Zercher · Smith Machine',meta:['Tempo 3-2-X-1','Última: 15s isométrico','RPE 8–9','Desc 90s'],exec:'Barra en el pliegue de los codos, antebrazos en supinación, torso erguido. Baja hasta que los codos casi toquen los muslos.',bjj:'Underhook y clinch hecho fuerza — takedowns y sprawls.'},
+      {id:'jalon_pecho',name:'A2. Jalón al pecho · Polea alta agarre cerrado',meta:['Tempo X-2-3-1','Pausa 2s','RPE 8–9'],exec:'Sentado o arrodillado frente a la polea. Jala hacia el pecho, codos abajo y atrás. Sin inercia. Baja 3s.',bjj:'Lats = guard retention y collar grips en los últimos minutos.'}
+    ],
+    sec:[
+      {id:'rdl',name:'B1. Peso muerto rumano · Mancuernas',meta:['Tempo 3-1-X-1','40–50 lb','RPE 8'],exec:'Bisagra pura de cadera, espalda neutra. Baja hasta debajo de rodilla. Aprieta glúteo para subir.',bjj:'Potencia de cadera posterior = shots, sprawls y explosión de guard.'},
+      {id:'press_hom',name:'B2. Press de hombro con mancuernas · De pie',meta:['Tempo 3-1-X-1','RPE 7–8'],exec:'Núcleo activo, no arquees la lumbar. Baja hasta 90° y sube explosivo.',bjj:'Frames altos y posición parada en clinch.'}
+    ]
+  }
+};
+
+const SUBS={
+  pallof_l:[{name:'Plancha lateral con abducción',meta:'3×25s/lado · Piso',exec:'Apoya antebrazo, cuerpo lateral rígido. Levanta cadera y mantén línea.',bjj:'Anti-lateral = escape de side control.'},{name:'Ab rollout en cable',meta:'3×10 · Polea baja, barra recta',exec:'Arrodillado frente a la polea. Rueda al frente alargando el cuerpo, regresa contrayendo el core.',bjj:'Anti-extensión = frame alto bajo presión.'},{name:'Dead bug',meta:'3×8/lado · Piso',exec:'Espalda en piso, brazos arriba, rodillas 90°. Baja brazo y pierna contrarios sin que la lumbar despegue.',bjj:'Coordinación contralateral = scramble.'}],
+  woodchop_l:[{name:'Rotación con polea media de pie',meta:'3×12/lado · Polea media',exec:'Pies a ancho de hombros. Jala con brazos extendidos rotando el torso.',bjj:'Rotación controlada = scrambles desde guard.'},{name:'Hollow body hold',meta:'3×30s · Piso',exec:'Espalda en piso, brazos arriba, piernas a 30°. Lumbar pegada al piso.',bjj:'Tensión de core = frame bajo presión.'},{name:'Cable woodchop invertido',meta:'3×12/lado · Polea baja',exec:'Diagonal desde cadera hacia hombro contrario. Mismo patrón pero inverso.',bjj:'Core diagonal = guard recovery.'}],
+  hip_thrust:[{name:'Cable Pull-Through explosivo',meta:'Explosivo · Polea baja, rope',exec:'De espaldas al cable, rope entre las piernas. Bisagra hacia adelante, extiende caderas explosivo.',bjj:'Misma explosión de cadera que el bridge.'},{name:'Hip thrust con mancuerna · Banco',meta:'Tempo 3-2-X-2 · 40–50 lb sobre cadera',exec:'Espalda en banco, mancuerna con ambas manos sobre cadera. Misma mecánica sin barra.',bjj:'Sustituto directo del Smith.'},{name:'Good morning · Smith Machine',meta:'Tempo 3-1-X-1 · Carga moderada',exec:'Barra en trapecio. Bisagra de cadera, torso baja casi paralelo.',bjj:'Cadena posterior = potencia de shot y sprawl.'}],
+  remo_uni:[{name:'Cable row sentado · V-handle',meta:'Tempo X-2-3-1 · Polea baja',exec:'Sentado frente a la polea, jala hacia el abdomen. Codos atrás, aprieta escápulas.',bjj:'Retractores y lats = postura en el mat.'},{name:'Chest-supported dumbbell row',meta:'Tempo X-1-3-1 · 30–40 lb',exec:'Pecho apoyado en banco inclinado 45°. Jala codos hacia atrás y arriba.',bjj:'Espalda media pura sin compensar lumbar.'},{name:'Face pull · Polea alta, rope',meta:'3×15 · Carga ligera',exec:'Polea a altura de cara. Jala rope hacia tu frente separando las manos. Codos arriba.',bjj:'Salud de hombro + postura en Gi.'}],
+  bulgara_l:[{name:'Goblet squat con pausa',meta:'Tempo 3-2-X-1 · 40–50 lb · Pausa 2s',exec:'Mancuerna abrazada al pecho. Baja hasta que los codos toquen los muslos. Pausa.',bjj:'Guard passing y posición baja.'},{name:'Step-up con mancuernas · Banco',meta:'Tempo 2-1-X-1 · 25–35 lb · 8/pierna',exec:'Pie en banco, empuja desde el talón. La pierna de abajo no ayuda.',bjj:'Stand-ups y wrestling en posición de paso.'},{name:'Leg press · Máquina',meta:'Tempo 3-1-X-1 · Carga alta',exec:'Pies a ancho de hombros. Baja hasta 90° sin que la lumbar se despegue.',bjj:'Cuádriceps bajo carga = resistencia a calambres.'}],
+  press_incl:[{name:'Press de banca plano · Mancuernas',meta:'Tempo 3-1-X-1 · Banco plano',exec:'Codos a 45° del torso. Baja controlado. Sube explosivo.',bjj:'Empuje horizontal = framing y distancia.'},{name:'Chest press machine',meta:'Tempo 3-1-X-1',exec:'Ajusta asiento para que los agarres queden a altura del pecho.',bjj:'Empuje estable = sprawl y frames.'},{name:'Cable chest fly',meta:'3×12 · Poleas bilaterales',exec:'Brazos ligeramente flexionados. Junta manos en arco frente al pecho.',bjj:'Pectoral = framing en guard top.'}],
+  pallof_m:[{name:'Suitcase carry estático',meta:'3×40s/lado · 40–45 lb',exec:'Sostén mancuerna pesada un solo lado. Hombros nivelados, columna neutra.',bjj:'Anti-lateral en carga = guard parado.'},{name:'Plancha con alcance (reach)',meta:'3×8 alcances/lado · Piso',exec:'En plancha. Extiende un brazo al frente sin que las caderas roten.',bjj:'Estabilidad rotacional = scramble.'},{name:'Press Pallof isométrico',meta:'3×30s/lado · Polea media',exec:'Brazos extendidos al frente. Mantén posición sin que el torso rote.',bjj:'Isométrico anti-rotacional = resistir el pull.'}],
+  jalon_bajo:[{name:'Straight-arm pulldown',meta:'Tempo X-1-3-1 · 3×12 · Polea alta',exec:'Brazos casi rectos, jala hacia los muslos. Los lats hacen todo.',bjj:'Lats en aislamiento = guard retention.'},{name:'Lat pulldown agarre supino',meta:'Tempo X-2-3-1 · 3×12',exec:'Agarre supino más cerrado que el hombro. Activa más bíceps y lats inferiores.',bjj:'Variante de tirón desde diferente ángulo.'},{name:'Cable row de pie unilateral',meta:'3×10/lado · D-handle · Polea baja',exec:'De pie lateral. Jala el agarre hacia la cadera en arco.',bjj:'Pull unilateral = guard parado.'}],
+  zercher:[{name:'Front squat · Smith Machine',meta:'Tempo 3-2-X-1 · Última rep isométrico',exec:'Barra en antepecho, codos altos. Torso erguido durante toda la bajada.',bjj:'Rack = clinch. Cuádriceps y core anterior.'},{name:'Goblet squat pesado',meta:'Tempo 4-2-X-1 · 45–50 lb · Pausa 2s',exec:'Mancuerna abrazada al pecho. Baja profundo. Torso vertical.',bjj:'Cuádriceps y core anterior = guard passing.'},{name:'Leg press bilateral',meta:'Tempo 3-1-X-1 · Alta carga · RPE 8–9',exec:'Baja hasta 90°. Última rep con isométrico 15s a 90°.',bjj:'Cuádriceps bajo fatiga = resistencia a calambres.'}],
+  jalon_pecho:[{name:'Straight-arm pulldown',meta:'Tempo X-1-3-1 · 3×10',exec:'Brazos casi rectos. Jala hacia los muslos. No flexiones el codo.',bjj:'Lats = collar grip y guard retention.'},{name:'Cable row sentado',meta:'Tempo X-2-3-1 · 4×6',exec:'Jala hacia el abdomen, codos atrás. Aprieta escápulas. Baja 3s.',bjj:'Pull horizontal — espalda completa para Gi.'},{name:'Remo con EZ-bar · Banco inclinado',meta:'Tempo X-1-3-1 · 3×8',exec:'Pecho apoyado en banco inclinado. EZ-bar colgando. Jala al abdomen.',bjj:'Espalda media y lats = postura y agarre.'}],
+  rdl:[{name:'Single-leg RDL · Mancuerna',meta:'Tempo 3-1-X-1 · 25–35 lb · 8/pierna',exec:'De pie en una pierna. Bisagra bajando la mancuerna. Pierna libre atrás.',bjj:'Cadena posterior unilateral = shot y wrestling.'},{name:'Cable pull-through',meta:'Tempo 3-1-X-1 · 3×10 · Polea baja',exec:'De espaldas al cable. Bisagra al frente con control, extiende al volver.',bjj:'Extensión de cadera = bridge y guard inferior.'},{name:'Good morning · Smith Machine',meta:'Tempo 3-1-X-1 · Carga moderada',exec:'Barra en trapecio. Bisagra con rodillas levemente flexionadas.',bjj:'Isquiotibiales y glúteo = shot y sprawl.'}],
+  press_hom:[{name:'Arnold press · Sentado',meta:'Tempo 3-1-X-1',exec:'Palmas hacia ti al inicio. Al subir, rota palmas hacia afuera.',bjj:'Hombro completo = frames en ángulos variables.'},{name:'Lateral raise + press combo',meta:'3×10 · Carga moderada',exec:'Sube lateralmente hasta hombro, luego presiona arriba.',bjj:'Deltoides = frames altos y posición parada.'},{name:'Cable overhead press unilateral',meta:'3×10/lado · D-handle · Polea baja',exec:'De pie lateral a la polea. Presiona hacia el techo. Core estabiliza.',bjj:'Empuje unilateral = frames asimétricos.'}]
+};
+
+// Calistenia progressions
+const CAL_WORKOUTS = {
+  basico:{
+    label:'Básico/Intermedio (~5 dominadas)',
+    note:'Sesión dominical de 45–60 min. Foco: construir volumen de jalón y empuje. Control total en cada rep — la velocidad no importa, la forma sí.',
+    blocks:[
+      {name:'Calentamiento',items:[
+        {ex:'Colgado activo en barra alta',detail:'3 × 20 seg',exec:'Agárrate a la barra con agarre prono. Baja los hombros lejos de las orejas activando las escápulas. No es colgar muerto — hay tensión en la espalda alta.',bjj:'Activa los lats que usas en collar grips y guard retention.'},
+        {ex:'Australian pull-up negativo lento',detail:'3 × 5 — baja en 5 seg',exec:'Empieza arriba con el pecho pegado a la barra. Baja controlado en 5 segundos con los pies en el suelo. Sube con impulso de piernas para reiniciar.',bjj:'Familiariza bíceps y lats con el patrón de dominada sin sobrecargar.'}
+      ]},
+      {name:'Jalón (Pulling) — Prioridad',items:[
+        {ex:'Australian pull-up (barra baja)',detail:'4 × AMRAP · Tempo X-1-3-1 (máx 10 reps con forma)',exec:'Barra a altura de cadera, cuerpo rígido como tabla con talones en el suelo. Jala el pecho hasta la barra, codos atrás. Baja lento 3 segundos. Cuanto más horizontal el cuerpo, más difícil.',bjj:'Pull horizontal fuerte = remo en Gi y control de manga.'},
+        {ex:'Dominada negativa (barra alta)',detail:'4 × 3–5 · Baja en 5 seg',exec:'Sube con salto o cajón hasta tener la barbilla sobre la barra. Baja extremadamente lento en 5 segundos con agarre prono. Activa el core para no balancearte.',bjj:'Excéntrico de dominada = fuerza de jalón para el arco y flecha.'},
+        {ex:'Anilla row (anillas bajas 30cm)',detail:'3 × 8–10 · Cuerpo rígido · Tempo X-1-3-1',exec:'Pies en el suelo, agarra las anillas con cuerpo inclinado hacia atrás. Jala hasta que las anillas queden a los lados del pecho. Supina las muñecas al llegar arriba. Baja lento.',bjj:'Patrón idéntico al grip fighting — supinar activa el bíceps en el agarre de manga.'}
+      ]},
+      {name:'Empuje (Pushing)',items:[
+        {ex:'Fondos en paralelas cortas',detail:'4 × 5–8 · Tempo 3-1-X-1',exec:'Agárrate a las paralelas, brazos extendidos. Baja en 3 segundos con codos hacia atrás (no hacia afuera), pecho ligeramente inclinado hacia adelante. Sube explosivo sin bloquear codos.',bjj:'Framing y posición de top — fuerza de empuje bajo carga.'},
+        {ex:'Push-up con anillas bajas',detail:'3 × 8 · Manos en anillas',exec:'Manos en las anillas en posición de push-up. La inestabilidad exige más estabilización escapular. Baja con control, mantén el core activo, sube rotando las anillas hacia adentro al final.',bjj:'Hombro estable en posición inestable = frames en scrambles.'},
+        {ex:'Pike push-up',detail:'3 × 6 · Pies en barra baja o suelo',exec:'Posición de V invertida con pies elevados en la barra baja. Baja la cabeza hacia el suelo doblando los codos hacia afuera. Empuja hacia arriba. Trabaja deltoides anterior y trapecio.',bjj:'Deltoides anterior = press overhead para frames altos.'}
+      ]},
+      {name:'Core y Abdomen',items:[
+        {ex:'Knee raise en barra alta',detail:'3 × 12 · Sin balanceo',exec:'Cuelga de la barra con agarre prono. Contrae el core y sube las rodillas hacia el pecho sin balancear el cuerpo. Baja controlado. Si te balanceas, haz una pausa entre cada rep.',bjj:'Core de flexión = posición cerrada de guard y control de distancia.'},
+        {ex:'L-sit en paralelas',detail:'3 × 10–15 seg',exec:'Agárrate a las paralelas con brazos extendidos. Empuja hacia abajo para levantar el cuerpo y mantén las piernas extendidas al frente formando una L. Si no puedes, dobla las rodillas primero.',bjj:'Tensión isométrica total = frame bajo presión sostenida.'},
+        {ex:'Hollow body hold',detail:'3 × 25 seg',exec:'Espalda en el piso, brazos extendidos arriba, piernas juntas elevadas a 30°. Presiona la zona lumbar contra el piso en todo momento. Si se despega, sube las piernas hasta que vuelva a pegarse.',bjj:'Anti-extensión = base de todas las posiciones de guard.'}
+      ]},
+      {name:'Finisher',items:[
+        {ex:'EMOM 8 min: 3 australian pull-ups + 5 push-ups',detail:'Cada inicio de minuto. Descansa lo que sobre.',exec:'Al sonar el minuto: 3 australian pull-ups estrictos + 5 push-ups completos. Luego descansas hasta el siguiente minuto. Si es muy fácil, agrega 1 rep a cada uno.',bjj:'Densidad de trabajo = resistencia muscular en rounds largos de Gi.'}
+      ]}
+    ]
+  },
+  intermedio:{
+    label:'Intermedio (8–12 dominadas)',
+    note:'Sesión dominical de 50–65 min. Foco: construir dominadas con peso, empuje vertical y explosividad.',
+    blocks:[
+      {name:'Calentamiento',items:[
+        {ex:'Scapular pull-up en barra',detail:'3 × 10',exec:'Cuelga de la barra sin doblar los codos. Solo mueve las escápulas: bájalaas (depresión) y luego súbelas (elevación). El cuerpo sube y baja ligeramente sin que los brazos se doblen.',bjj:'Activa retractores y serratos — postura en el mat.'},
+        {ex:'Colgado activo con giro de muñecas',detail:'3 × 30 seg',exec:'Cuelga de la barra activo (escápulas abajo). Gira las muñecas alternando agarre prono y supino lentamente. Mantén la tensión en lats y antebrazo.',bjj:'Grip endurance y salud de codo para rounds largos.'}
+      ]},
+      {name:'Jalón — Prioridad',items:[
+        {ex:'Dominada estricta',detail:'4 × AMRAP · Tempo X-2-3-1 · Al fallo limpio',exec:'Agarre prono a ancho de hombros. Parte de colgado muerto activo. Jala hasta que la barbilla supere la barra — no la empujes hacia adelante. Baja lento 3 segundos. Sin kipping.',bjj:'Fuerza máxima de jalón = control en clinch y potencia del arco y flecha.'},
+        {ex:'Anilla row con pies elevados',detail:'4 × 8 · Pies en barra baja',exec:'Pies elevados en la barra baja, cuerpo más horizontal que en el nivel básico. Jala las anillas hacia el pecho. Cuanto más horizontal, más difícil. Supina al final.',bjj:'Jale pesado horizontal = grip fighting y remo en Gi.'},
+        {ex:'Chin-up negativo lento',detail:'3 × 3 · Baja en 8–10 seg',exec:'Agarre supino (palmas hacia ti). Sube con salto. Desde arriba, baja en 8-10 segundos manteniendo tensión completa. Si te cae más rápido, el eccéntrico ya no cuenta.',bjj:'Máximo eccéntrico para desarrollar dominada más fuerte.'}
+      ]},
+      {name:'Empuje',items:[
+        {ex:'Fondos en anillas (anillas altas)',detail:'4 × 6–8 · Tempo 3-1-X-1',exec:'Agárrate a las anillas altas, baja en 3 segundos con codos hacia atrás. Sube explosivo girando las anillas hacia adentro al llegar arriba para estabilizar el hombro. La inestabilidad aumenta la demanda rotacional.',bjj:'Framing inestable = empuje real en posiciones de contacto.'},
+        {ex:'Archer push-up',detail:'3 × 5/lado',exec:'En posición de push-up con manos muy separadas. Baja hacia un lado doblando ese codo mientras el otro brazo se extiende. Alterna lados. Es una transición entre dos push-ups.',bjj:'Empuje unilateral = framing asimétrico en scramble.'},
+        {ex:'HSPU asistido (pies en pared)',detail:'3 × 5',exec:'Pies contra la pared en posición invertida, manos en el suelo a ancho de hombros. Baja la cabeza al suelo doblando los codos hacia afuera y sube. Si no puedes, usa pike push-up con pies más elevados.',bjj:'Deltoides vertical y trapecio = press overhead funcional.'}
+      ]},
+      {name:'Core',items:[
+        {ex:'Toes to bar',detail:'3 × 8',exec:'Cuelga de la barra. Contrae el core y sube los pies hasta tocar la barra con los dedos. Controla la bajada — no te balancees. Si no llegas, sube las piernas rectas hasta la horizontal.',bjj:'Core dinámico de flexión = guard retention y barridas.'},
+        {ex:'L-sit en paralelas',detail:'4 × 15–20 seg',exec:'Misma mecánica que el básico pero aguanta más. Empuja activamente hacia abajo en las paralelas. Si tembla, aguanta — ese temblor es adaptación.',bjj:'Tensión de core = frame sostenido bajo presión.'},
+        {ex:'Dragon flag negativo',detail:'3 × 3–5',exec:'Acuéstate en la barra o banco. Agárrate atrás de la cabeza. Sube el cuerpo en línea recta (solo los hombros en el suelo) y baja lentamente con el cuerpo completamente rígido.',bjj:'Anti-extensión avanzada = control de posición total.'}
+      ]},
+      {name:'Finisher',items:[
+        {ex:'Tabata: pull-up + push-up alternados',detail:'8 rondas × 20s ON / 10s OFF',exec:'Ronda 1: 20s de pull-ups. Ronda 2: 20s de push-ups. Alterna. 8 rondas totales (4 de cada uno). El objetivo es mantener las mismas reps en cada ronda — no agotar en la primera.',bjj:'Resistencia al ácido láctico = aguantar la intensidad al final del match.'}
+      ]}
+    ]
+  },
+  avanzado:{
+    label:'Avanzado (15+ dominadas)',
+    note:'Sesión dominical de 60–75 min. Foco: fuerza máxima, habilidades gimnásticas y potencia explosiva.',
+    blocks:[
+      {name:'Jalón — Fuerza máxima',items:[
+        {ex:'Dominada con peso',detail:'5 × 3–5 · Tempo X-2-3-0 · RPE 8–9',exec:'Mochila cargada o mancuerna entre los pies. Agarre prono. Parte de colgado activo. Jala explosivo hasta que la barbilla supere la barra. Baja lento 3 segundos. Aumenta carga cada semana.',bjj:'Fuerza absoluta de jalón — directamente en collar grips y arco y flecha.'},
+        {ex:'Muscle-up',detail:'4 × AMRAP limpio',exec:'Desde colgado, genera un jalón explosivo hacia las caderas (no hacia el pecho). Cuando los codos pasen la altura de la barra, empuja hacia abajo para pasar a la posición de fondo. Solo reps limpias cuentan.',bjj:'Transición explosiva jalón→empuje = scrambles y cambios de posición rápidos.'},
+        {ex:'Archer pull-up',detail:'3 × 4/lado',exec:'Agarre muy ancho. Jala hacia un lado mientras el otro brazo se extiende casi recto. El cuerpo sube hacia la mano que jala. Alterna. Trabaja cada lat de forma unilateral.',bjj:'Pull unilateral máximo = jale asimétrico en clinch.'}
+      ]},
+      {name:'Empuje',items:[
+        {ex:'Ring dip (anillas altas)',detail:'4 × 6 · Tempo 3-1-X-1',exec:'Sube a las anillas con los brazos extendidos. Baja en 3 segundos con codos atrás, pecho inclinado. Sube explosivo girando las anillas hacia adentro. La inestabilidad de las anillas es el punto — no las fijes.',bjj:'Framing de alta demanda = estabilización en posiciones de contacto.'},
+        {ex:'HSPU estricto',detail:'4 × 4–6',exec:'Invertido con manos en el suelo, pies contra la pared o en equilibrio. Baja la cabeza entre las manos hasta tocar el suelo. Sube con fuerza. Manos a ancho de hombros.',bjj:'Press vertical máximo = frames overhead y posición de sprawl.'},
+        {ex:'Planche lean',detail:'3 × 20 seg',exec:'En posición de push-up, desplaza el cuerpo hacia adelante hasta que los hombros pasen las manos. Mantén el cuerpo rígido y la mirada al suelo. Progresión hacia el planche.',bjj:'Tensión total de empuje y estabilización de hombro.'}
+      ]},
+      {name:'Core avanzado',items:[
+        {ex:'Front lever negativo',detail:'3 × 5 seg',exec:'Desde colgado, sube el cuerpo horizontal a la barra (cuerpo paralelo al suelo, cara abajo). Mantén 5 segundos. Si no puedes, dobla las rodillas o une solo una pierna extendida.',bjj:'Control corporal total = fuerza de tensión en todas las posiciones.'},
+        {ex:'Dragon flag',detail:'3 × 5',exec:'En banco o barra, agárrate atrás de la cabeza. Sube el cuerpo rígido y baja lento sin tocar el suelo hasta casi llegar. El cuerpo recto como tabla — si la cadera cede, el ejercicio no cuenta.',bjj:'Anti-extensión máxima = control de posición bajo carga.'},
+        {ex:'L-sit to V-sit',detail:'3 × 5',exec:'Desde L-sit en paralelas, sube las piernas hasta pasar la horizontal (V-sit). Controlado. Si no llegas al V-sit, trabaja solo el L-sit con más tiempo.',bjj:'Core de flexión de alta intensidad = guard activo y control de piernas.'}
+      ]},
+      {name:'Finisher',items:[
+        {ex:'5 rondas: 5 dominadas + 10 push-ups + 15 hollow holds',detail:'Sin descanso entre ejercicios · 60s entre rondas',exec:'5 dominadas estrictas → inmediato 10 push-ups → inmediato 15 hollow holds de 2s cada uno. Luego 60s de descanso y repite. La forma no puede colapsar en las últimas rondas.',bjj:'Resistencia mixta jalón/empuje/core = demanda real de un match largo.'}
+      ]}
+    ]
+  }
+};
+
+// ══════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════
+
+let S = {
+  phase:1, day:'lunes', calLevel:'basico',
+  logs:[], diary:[], schedChanges:[], gyms:[
+    {id:'oasis',name:'🏠 Gym Oasis',equip:'Smith machine con discos\nCable/polea ajustable (barra recta, rope, D-handle)\nMancuernas 5–50 lb\nBancos ajustables (incline/flat)\nLeg press · Leg extension\nChest press machine\nAbductor/adductor machine\nBicicleta estacionaria · Caminadora · Elíptica',img:null,isBase:true},
+    {id:'barras',name:'⚡ Barras Heroes',equip:'Anillas altas\nAnillas bajas (30cm del suelo)\nBarra alta\nBarra media\nBarra baja (Australian pull-ups)\nParalelas cortas (abdomen / fondos)',img:null,isBase:true}
+  ],
+  swaps:{}
+};
+
+const SAVE = () => localStorage.setItem('bjj_v3', JSON.stringify(S));
+const LOAD = () => {
+  try {
+    const r = localStorage.getItem('bjj_v3');
+    if(r) { const p = JSON.parse(r); S = {...S,...p}; if(!S.gyms?.length) S.gyms = [{id:'oasis',name:'🏠 Gym Oasis',equip:'Smith machine\nCable/polea\nMancuernas 5–50 lb\nBancos ajustables\nLeg press\nBicicleta estacionaria',img:null,isBase:true},{id:'barras',name:'⚡ Barras Heroes',equip:'Anillas altas\nAnillas bajas (30cm)\nBarra alta/media/baja\nParalelas cortas',img:null,isBase:true}]; }
+  } catch(e){}
+};
+
+// ══════════════════════════════════════════════════════════════
+// COUNTDOWN & TICK
+// ══════════════════════════════════════════════════════════════
+
+function tick(){
+  const days = Math.max(0, Math.floor((COMP_DATE - new Date()) / 86400000));
+  document.getElementById('countdown').textContent = days + ' DÍAS';
+  document.getElementById('st-dias').textContent = days;
+  const pct = Math.min(100, Math.round(((54-days)/54)*100));
+  document.getElementById('pbar').style.width = pct+'%';
+  document.getElementById('pbar-pct').textContent = pct+'%';
+}
+
+// ══════════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════════
+
+function nav(id, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  el.classList.add('active');
+  if(id==='semana') renderSemana();
+  if(id==='gym') { checkGymRegano(); renderWorkout(); }
+  if(id==='calistenia') renderCalistenia();
+  if(id==='progresion') renderProgress();
+  if(id==='diario') renderDiary();
+  if(id==='gyms') renderGyms();
+}
+
+// ══════════════════════════════════════════════════════════════
+// SEMANA
+// ══════════════════════════════════════════════════════════════
+
+function renderSemana(){
+  checkRegano();
+  renderWeekBar();
+  renderTodayContext();
+  renderSchedChanges();
+}
+
+function renderWeekBar(){
+  const days = ['lunes','martes','miercoles','jueves','viernes','sabado','domingo'];
+  const shortNames = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  const todayIdx = new Date().getDay(); // 0=sun
+  const todayName = DAY_NAMES_ES[todayIdx];
+  let h = '';
+  days.forEach((d,i)=>{
+    const info = WEEK_SCHEDULE[d];
+    const isToday = d === todayName;
+    h += `<div class="wd ${info.color} ${isToday?'today':''}" onclick="showDayDetail('${d}')">
+      <div class="wd-name">${shortNames[i]}</div>
+      <div class="wd-icon">${info.icon}</div>
+      <div class="wd-label">${info.label}</div>
+    </div>`;
+  });
+  document.getElementById('week-bar').innerHTML = h;
+}
+
+function showDayDetail(day){
+  const info = WEEK_SCHEDULE[day];
+  toast(`${info.icon} ${day.charAt(0).toUpperCase()+day.slice(1)}: ${info.detail}`, 'var(--surface3)', 4000);
+}
+
+function renderTodayContext(){
+  const todayIdx = new Date().getDay();
+  const todayName = DAY_NAMES_ES[todayIdx];
+  const info = WEEK_SCHEDULE[todayName];
+  const el = document.getElementById('today-context');
+
+  let colorClass = 'b-gold';
+  if(info.type==='gym') colorClass='b-red';
+  if(info.type==='bjj') colorClass='b-blue';
+  if(info.type==='cal') colorClass='b-purple';
+  if(info.type==='rest') colorClass='b-green';
+
+  let extra = '';
+  if(info.type==='gym') extra = '<div class="btn-row" style="margin-top:8px"><button class="btn btn-red btn-sm" onclick="navToGym()">→ Abrir rutina de gym</button></div>';
+  if(info.type==='bjj') extra = '<div class="btn-row" style="margin-top:8px"><button class="btn btn-blue btn-sm" onclick="navToDiario()">→ Registrar sesión de BJJ después</button></div>';
+  if(info.type==='cal') extra = '<div class="btn-row" style="margin-top:8px"><button class="btn btn-purple btn-sm" onclick="navToCalistenia()">→ Abrir rutina de calistenia</button></div>';
+
+  el.innerHTML = `<div class="banner ${colorClass}">
+    <div class="b-icon">${info.icon}</div>
+    <div style="flex:1">
+      <div class="b-title">Hoy: ${todayName.charAt(0).toUpperCase()+todayName.slice(1)}</div>
+      <div class="b-text">${info.detail}</div>
+      ${extra}
+    </div>
+  </div>`;
+}
+
+function navToGym(){ document.querySelectorAll('.tab')[1].click(); }
+function navToDiario(){ document.querySelectorAll('.tab')[4].click(); }
+function navToCalistenia(){ document.querySelectorAll('.tab')[2].click(); }
+
+function checkRegano(){
+  const el = document.getElementById('regano');
+  if(!S.logs.length && !S.diary.length) { el.classList.remove('show'); return; }
+  const lastActivity = Math.max(
+    S.logs.length ? S.logs[S.logs.length-1].ts : 0,
+    S.diary.length ? S.diary[0].ts : 0
+  );
+  const daysSince = Math.floor((Date.now() - lastActivity) / 86400000);
+  if(daysSince >= 3){
+    const r = REGANOS[Math.floor(Math.random()*REGANOS.length)];
+    document.getElementById('regano-txt').textContent = r.txt.replace('{days}', daysSince + ' días');
+    document.getElementById('regano-sub').textContent = r.sub;
+    el.classList.add('show');
+  } else {
+    el.classList.remove('show');
+  }
+}
+
+function checkGymRegano(){
+  // Lighter check for gym tab
+  const last = S.logs.length ? S.logs[S.logs.length-1].ts : 0;
+  const daysSince = Math.floor((Date.now()-last)/86400000);
+  const el = document.getElementById('gym-regano');
+  if(daysSince>=4 && S.logs.length>0){
+    el.innerHTML = `<div class="regano-txt">¿${daysSince} días sin registrar gym? Aquí vamos de nuevo...</div><div class="regano-sub">Registra aunque sea una serie. La constancia construye atletas, la inspiración no.</div>`;
+    el.classList.add('show');
+  } else { el.classList.remove('show'); }
+}
+
+function saveScheduleChange(){
+  const day = document.getElementById('sched-day').value;
+  const change = document.getElementById('sched-change').value;
+  const note = document.getElementById('sched-note').value;
+  S.schedChanges.unshift({day,change,note,date:new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short'}),ts:Date.now()});
+  SAVE();
+  toast('✓ Cambio registrado','var(--success)');
+  renderSchedChanges();
+}
+
+function renderSchedChanges(){
+  const el = document.getElementById('sched-changes-list');
+  if(!S.schedChanges?.length){ el.innerHTML=''; return; }
+  const labels = {cancelled:'❌ Cancelada','moved-early':'☀️ Movida a mañana','moved-late':'🌙 Movida a noche','added-gym':'💪 Gym extra','extra-bjj':'🥋 BJJ extra',rest:'😴 Descanso'};
+  el.innerHTML = '<div class="shdr">Cambios registrados</div>' + S.schedChanges.slice(0,10).map((c,i)=>`
+    <div class="diary-entry">
+      <div class="de-hdr">
+        <span class="de-date">${c.date} — ${c.day.charAt(0).toUpperCase()+c.day.slice(1)}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="de-type gi">${labels[c.change]||c.change}</span>
+          <button class="btn btn-ghost btn-sm" style="color:var(--red-bright);padding:2px 8px;font-size:10px" onclick="deleteSchedChange(${i})">✕</button>
+        </div>
+      </div>
+      ${c.note?`<div class="de-text">${c.note}</div>`:''}
+    </div>`).join('');
+}
+
+function deleteSchedChange(idx){
+  S.schedChanges.splice(idx,1);
+  SAVE();
+  renderSchedChanges();
+  toast('Cambio eliminado','var(--muted)');
+}
+
+// ══════════════════════════════════════════════════════════════
+// GYM WORKOUT
+// ══════════════════════════════════════════════════════════════
+
+function setPhase(n,el){
+  S.phase=n; S.swaps={}; SAVE();
+  document.querySelectorAll('.ph-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pb-title').textContent = PHASES[n].title;
+  document.getElementById('pb-text').textContent = PHASES[n].text;
+  renderWorkout();
+}
+
+function setDay(d,el){
+  S.day=d; S.swaps={}; SAVE();
+  document.querySelectorAll('.day-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderWorkout();
+}
+
+function renderWorkout(){
+  document.getElementById('pb-title').textContent = PHASES[S.phase].title;
+  document.getElementById('pb-text').textContent = PHASES[S.phase].text;
+  const day = WRK[S.day];
+  const ph = PHASES[S.phase];
+  const fin = S.day==='lunes' ? ph.finL : ph.finM;
+  const altFin = S.day==='lunes' ? 'Caminadora al 8–10% × 10 min' : 'Elíptica × 12 min a intensidad 7–8/10';
+  let h = '';
+
+  // Smart rec
+  const rec = getSmartRec();
+  const recEl = document.getElementById('smart-rec');
+  if(rec){ recEl.style.display='block'; recEl.innerHTML=`<div style="background:rgba(41,128,185,.08);border:1px solid rgba(41,128,185,.25);border-radius:8px;padding:11px 13px;margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#5DADE2;margin-bottom:4px">🤖 COACH — basado en tu último BJJ</div><div style="font-size:12px;color:#CCC;line-height:1.5">${rec}</div></div>`; }
+  else recEl.style.display='none';
+
+  h += `<div class="shdr">1 — Respiración y Movilidad · 8–10 min</div><div class="wu-table"><div class="wu-row wu-hdr"><span>Ejercicio</span><span>Detalle</span></div>`;
+  day.warmup.forEach(r=>h+=`<div class="wu-row"><span>${r[0]}</span><span style="color:var(--muted)">${r[1]}</span></div>`);
+  h+=`</div>`;
+
+  h+=`<div class="shdr">2 — Core en Polea · RPE 7 · Desc 30s</div>`;
+  day.core.forEach(ex=>h+=buildCard(ex,false,null));
+
+  h+=`<div class="shdr">3 — Fuerza Principal · ${ph.sets.main} series · RPE 8–9 · Desc 90s</div>`;
+  day.main.forEach(ex=>h+=buildCard(ex,true,ph.sets.main));
+
+  h+=`<div class="shdr">4 — Fuerza Secundaria · ${ph.sets.sec} series · RPE 7–8 · Desc 75s</div>`;
+  day.sec.forEach(ex=>h+=buildCard(ex,true,ph.sets.sec));
+
+  h+=`<div class="shdr">5 — Finisher Cardio</div>
+  <div class="fin-card">
+    <div class="fin-title">🚴 Bicicleta Estacionaria · ${fin.r}</div>
+    <div class="fin-row"><div class="fin-dot"></div>${fin.p}</div>
+    <div class="fin-row"><div class="fin-dot"></div><span style="color:var(--gold)">${fin.n}</span></div>
+    <div class="fin-row" style="margin-top:5px;font-size:11px;color:var(--muted)"><div class="fin-dot"></div>Alt: ${altFin}</div>
+  </div>`;
+
+  document.getElementById('workout-content').innerHTML = h;
+}
+
+function buildCard(ex,showLog,sets){
+  const si = S.swaps[ex.id];
+  const isSwapped = si!==undefined && SUBS[ex.id];
+  const sub = isSwapped ? SUBS[ex.id][si] : null;
+  const nm = isSwapped ? ((ex.name.match(/^[AB][12]\.\s/)||[''])[0])+sub.name : ex.name;
+  const exec = isSwapped ? sub.exec : ex.exec;
+  const bjj  = isSwapped ? sub.bjj  : ex.bjj;
+  const metaArr = isSwapped ? [sub.meta] : ex.meta;
+
+  const dayLogs = S.logs.filter(l=>l.id===ex.id);
+  const isLogged = dayLogs.length>0;
+  const hasSubs = SUBS[ex.id]?.length>0;
+
+  let chips = metaArr.map(m=>`<span class="chip">${m}</span>`).join('');
+  if(sets&&!isSwapped) chips = `<span class="chip">${sets} series</span>`+chips;
+  if(isSwapped) chips += `<span class="chip gold">⇄ sustituido</span>`;
+
+  let hist='';
+  if(dayLogs.length){ hist=`<div class="log-hist">`; dayLogs.slice(-3).forEach(l=>{ hist+=`<div class="lhe"><span>${l.date}</span><span class="v">${l.weight}lb×${l.reps}×${l.sets}s</span>${l.note?`<span>${l.note}</span>`:''}</div>`; }); hist+=`</div>`; }
+
+  let swapPanel='';
+  if(hasSubs){
+    const opts=SUBS[ex.id].map((s,i)=>`<div class="swap-opt" onclick="doSwap('${ex.id}',${i})"><div class="so-name">${s.name}</div><div class="so-meta">${s.meta}</div><div class="so-exec">${s.exec}</div><div class="so-bjj">🥋 ${s.bjj}</div><div class="so-sel">Usar este →</div></div>`).join('');
+    swapPanel=`<div class="swap-panel" id="sp-${ex.id}"><div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:9px">⇄ Alternativas — mismo patrón y objetivo BJJ</div>${opts}${isSwapped?`<button class="swap-btn btn-sm" style="margin-top:7px" onclick="resetSwap('${ex.id}')">↩ Restaurar original</button>`:''}</div>`;
+  }
+
+  let logSection='';
+  if(showLog){ logSection=`<div class="log-sec"><div class="lf"><label>Peso (lb)</label><input type="number" id="w-${ex.id}" placeholder="0"></div><div class="lf"><label>Reps</label><input type="number" id="r-${ex.id}" placeholder="0"></div><div class="lf"><label>Series</label><input type="number" id="s-${ex.id}" placeholder="${sets||4}"></div><div class="lf"><label>Nota</label><input type="text" id="n-${ex.id}" placeholder="RPE, sensación..." class="wide"></div><button class="log-btn" onclick="logEx('${ex.id}','${nm.replace(/'/g,"\\'")}')">Registrar</button></div>`; }
+
+  return `<div class="ex-card ${isLogged?'logged':''} ${isSwapped?'swapped':''}" id="card-${ex.id}">
+    <div class="ex-name-bar"><span class="ex-name">${nm}</span><div style="display:flex;gap:5px;align-items:center;flex-shrink:0">${isLogged?'<span style="color:var(--success);font-size:11px">✓</span>':''}${hasSubs?`<button class="swap-btn" onclick="toggleSwap('${ex.id}')">⇄ cambiar</button>`:''}</div></div>
+    <div class="ex-meta">${chips}</div>
+    <div class="ex-body"><div class="ex-lbl">Ejecución</div><div class="ex-text">${exec}</div><div class="bjj-note">🥋 ${bjj}</div></div>
+    ${hist}${swapPanel}${logSection}
+  </div>`;
+}
+
+function toggleSwap(id){ const p=document.getElementById('sp-'+id); if(p) p.classList.toggle('open'); }
+function doSwap(id,idx){ S.swaps[id]=idx; SAVE(); renderWorkout(); toast('⇄ Ejercicio cambiado','var(--gold)'); setTimeout(()=>{ const c=document.getElementById('card-'+id); if(c) c.scrollIntoView({behavior:'smooth',block:'center'}); },100); }
+function resetSwap(id){ delete S.swaps[id]; SAVE(); renderWorkout(); toast('↩ Original restaurado','var(--muted)'); }
+
+function logEx(id,name){
+  const w=document.getElementById('w-'+id)?.value;
+  const r=document.getElementById('r-'+id)?.value;
+  const s=document.getElementById('s-'+id)?.value;
+  const n=document.getElementById('n-'+id)?.value;
+  if(!w||!r){ toast('Ingresa peso y reps','var(--red)'); return; }
+  S.logs.push({id,name,weight:parseFloat(w),reps:parseInt(r),sets:parseInt(s)||4,note:n||'',day:S.day,phase:S.phase,date:new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short'}),ts:Date.now()});
+  SAVE(); toast('✓ '+name+' registrado','var(--success)'); renderWorkout();
+}
+
+// ══════════════════════════════════════════════════════════════
+// CALISTENIA
+// ══════════════════════════════════════════════════════════════
+
+function setCalLevel(lvl, el){
+  S.calLevel=lvl; SAVE();
+  document.querySelectorAll('.cal-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderCalistenia();
+}
+
+function renderCalistenia(){
+  const lvl = CAL_WORKOUTS[S.calLevel];
+  const lastCal = S.logs.filter(l=>l.isCal);
+  let h = `<div class="banner b-purple" style="margin-bottom:12px">
+    <div class="b-icon">📋</div>
+    <div><div class="b-title">${lvl.label}</div><div class="b-text">${lvl.note}</div></div>
+  </div>`;
+
+  lvl.blocks.forEach(block=>{
+    h+=`<div class="shdr">${block.name}</div>`;
+    block.items.forEach(item=>{
+      const logId = 'cal_'+item.ex.replace(/[^a-z]/gi,'_').toLowerCase().slice(0,20);
+      const pastLogs = S.logs.filter(l=>l.id===logId&&l.isCal);
+      h+=`<div class="ex-card ${pastLogs.length?'logged':''}" style="border-color:${pastLogs.length?'var(--success)':'rgba(142,68,173,.3)'}">
+        <div class="ex-name-bar" style="background:rgba(142,68,173,.15)"><span class="ex-name" style="color:#E8DAEF">${item.ex}</span>${pastLogs.length?'<span style="color:var(--success);font-size:11px">✓</span>':''}</div>
+        <div class="ex-meta"><span class="chip purple">${item.detail}</span></div>
+        <div class="ex-body">
+          <div class="ex-lbl">Ejecución</div>
+          <div class="ex-text">${item.exec}</div>
+          ${pastLogs.length?`<div class="log-hist" style="margin-top:6px">${pastLogs.slice(-2).map(l=>`<div class="lhe"><span>${l.date}</span><span class="v">${l.reps} · ${l.note||''}</span></div>`).join('')}</div>`:''}
+          <div class="bjj-note">🥋 ${item.bjj}</div>
+        </div>
+        <div class="log-sec">
+          <div class="lf"><label>Reps / Tiempo</label><input type="text" id="cr-${logId}" placeholder="8 reps / 30s"></div>
+          <div class="lf"><label>Sets</label><input type="number" id="cs-${logId}" placeholder="3" style="width:55px"></div>
+          <div class="lf"><label>Nota</label><input type="text" id="cn-${logId}" placeholder="sensación..." class="wide"></div>
+          <button class="log-btn" style="background:var(--purple)" onclick="logCal('${logId}','${item.ex.replace(/'/g,"\\'")}')">Registrar</button>
+        </div>
+      </div>`;
+    });
+  });
+
+  document.getElementById('cal-content').innerHTML = h;
+}
+
+function logCal(id,name){
+  const r=document.getElementById('cr-'+id)?.value;
+  const s=document.getElementById('cs-'+id)?.value;
+  const n=document.getElementById('cn-'+id)?.value;
+  if(!r){ toast('Ingresa reps o tiempo','var(--red)'); return; }
+  S.logs.push({id,name,weight:0,reps:r,sets:parseInt(s)||3,note:n||'',isCal:true,date:new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short'}),ts:Date.now()});
+  SAVE(); toast('✓ '+name,'var(--purple)'); renderCalistenia();
+}
+
+// ══════════════════════════════════════════════════════════════
+// PROGRESS
+// ══════════════════════════════════════════════════════════════
+
+function renderProgress(){
+  const gymLogs = S.logs.filter(l=>!l.isCal);
+  const uniqueDays = new Set(gymLogs.map(l=>l.date)).size;
+  document.getElementById('st-ses').textContent=uniqueDays;
+  document.getElementById('st-ex').textContent=S.logs.length;
+  document.getElementById('st-bjj').textContent=S.diary.length;
+  const body=document.getElementById('hist-body');
+  if(!S.logs.length){ body.innerHTML='<div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">Loguea tu primera sesión.</div>'; return; }
+  body.innerHTML=[...S.logs].reverse().slice(0,30).map(l=>`
+    <div class="hr-row">
+      <span>${l.name}${l.isCal?'<span style="color:var(--purple);font-size:9px"> ·cal</span>':''}</span>
+      <span style="color:var(--red-bright);font-family:monospace">${l.weight?l.weight+'lb':l.reps}</span>
+      <span>${l.reps}</span>
+      <span>${l.sets}</span>
+      <span style="color:var(--muted)">${l.date}</span>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// DIARY
+// ══════════════════════════════════════════════════════════════
+
+const OK_TAGS=['ok-cardio','ok-guard','ok-passing','ok-sweep','ok-sub','ok-grip','ok-exp','ok-mind'];
+const WEAK_TAGS=['w-cardio','w-guard','w-passing','w-sweep','w-grip','w-exp','w-riva','w-mount','w-arco','w-barra','w-fatiga','w-calambre','w-mind'];
+const TAG_LABELS={'ok-cardio':'Cardio','ok-guard':'Guard','ok-passing':'Passing','ok-sweep':'Barridas','ok-sub':'Submissions','ok-grip':'Grip','ok-exp':'Explosividad','ok-mind':'Mindset','w-cardio':'Cardio','w-guard':'Guard ret.','w-passing':'Guard passing','w-sweep':'Barridas','w-grip':'Grip','w-exp':'Explosividad','w-riva':'Guardia riva','w-mount':'Montada','w-arco':'Arco y flecha','w-barra':'Barras','w-fatiga':'Fatiga muscular','w-calambre':'Calambres','w-mind':'Mindset'};
+
+function saveDiary(){
+  const text=document.getElementById('d-text').value.trim();
+  const type=document.getElementById('d-type').value;
+  const dur=document.getElementById('d-dur').value;
+  const energy=document.getElementById('d-energy').value;
+  if(!text){ toast('Cuéntame algo sobre la sesión','var(--red)'); return; }
+  const oks=OK_TAGS.filter(t=>document.getElementById(t)?.checked).map(t=>TAG_LABELS[t]);
+  const weaks=WEAK_TAGS.filter(t=>document.getElementById(t)?.checked).map(t=>TAG_LABELS[t]);
+  S.diary.unshift({id:Date.now(),date:new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'}),type,dur:parseInt(dur)||60,energy,text,oks,weaks,ts:Date.now()});
+  SAVE();
+  document.getElementById('d-text').value='';
+  document.getElementById('d-dur').value='';
+  [...OK_TAGS,...WEAK_TAGS].forEach(t=>{ const el=document.getElementById(t); if(el) el.checked=false; });
+  toast('✓ Entrada guardada','var(--success)');
+  renderDiary();
+}
+
+function renderDiary(){
+  const list=document.getElementById('diary-list');
+  if(!S.diary.length){ list.innerHTML='<div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">Sin entradas aún.</div>'; return; }
+  list.innerHTML=S.diary.slice(0,20).map(e=>`
+    <div class="diary-entry">
+      <div class="de-hdr"><span class="de-date">${e.date} · ${e.dur}min · energía ${e.energy||'media'}</span><span class="de-type ${e.type}">${e.type.toUpperCase()}</span></div>
+      <div class="de-text">${e.text}</div>
+      <div class="de-tags">
+        ${e.oks.map(t=>`<span class="de-tag ok">✓ ${t}</span>`).join('')}
+        ${e.weaks.map(t=>`<span class="de-tag weak">✗ ${t}</span>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+async function aiDiaryRec(){
+  const text=document.getElementById('d-text').value.trim();
+  if(!text){ toast('Escribe algo primero','var(--red)'); return; }
+  const oks=OK_TAGS.filter(t=>document.getElementById(t)?.checked).map(t=>TAG_LABELS[t]);
+  const weaks=WEAK_TAGS.filter(t=>document.getElementById(t)?.checked).map(t=>TAG_LABELS[t]);
+  const energy=document.getElementById('d-energy').value;
+  const recentCtx=S.diary.slice(0,5).map(e=>`${e.date}(${e.type}): bien=${e.oks.join(',')}, mal=${e.weaks.join(',')}`).join('\n');
+  const out=document.getElementById('ai-rec-out');
+  const btn=document.getElementById('ai-rec-btn');
+  out.style.display='block'; out.textContent='Analizando...'; btn.disabled=true;
+
+  const prompt=`Eres un entrenador S&C especializado en BJJ competitivo. Atleta: 27 años, 65kg, intermedio Gi+No-Gi, compite el 6 Jun 2026 (Latin American Open). Semana: Lunes gym, Martes BJJ Gi, Miércoles gym, Jueves BJJ No-Gi + Thai Boxing, Viernes Open Mat Gi, Domingo calistenia. Equipo gym: Smith machine, cable/polea, mancuernas 5-50lb, banco, leg press, bici estacionaria. Equipo calistenia: anillas altas/bajas, barra alta/media/baja, paralelas cortas.
+
+Sesión de HOY:
+Descripción: ${text}
+Estuvo bien: ${oks.join(',')||'nada marcado'}
+Necesita mejorar: ${weaks.join(',')||'nada marcado'}
+Energía: ${energy}
+
+Historial reciente BJJ:
+${recentCtx||'Sin historial'}
+
+Responde EN ESPAÑOL con 3 secciones concisas:
+1. PATRONES DÉBILES: los 2-3 patrones físicos más críticos detectados
+2. GYM (próxima sesión): 2-3 ejercicios concretos del gym con sets/reps que trabajen esas debilidades
+3. CALISTENIA (próximo domingo): 1-2 ejercicios de barras que complementen
+
+Sé directo. Máximo 180 palabras. Sin intro ni outro.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    out.textContent=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'Error.';
+  }catch(e){out.textContent='Error de conexión.';}
+  btn.disabled=false;
+}
+
+function getSmartRec(){
+  if(!S.diary.length) return null;
+  const last=S.diary[0];
+  if(!last.weaks.length) return null;
+  const MAP={'Cardio':'Cardio débil — el finisher de hoy es obligatorio. Sin excusas.','Guard ret.':'Guard retention débil — Pallof Press con máxima tensión hoy, no lo aceleres.','Guard passing':'Passing débil — Zercher squat y búlgara son tu prioridad. Explosión de cadera.','Barridas':'Barridas flojas — hip thrust al 100%, pausa 2s arriba en cada rep.','Grip':'Grip débil — sin straps hoy, agarre siempre al máximo, no sueltes entre reps.','Explosividad':'Explosividad baja — concéntrico lo más rápido posible manteniendo la técnica.','Guardia riva':'Riva te come — hip thrust + búlgara son el foco. Visualiza el pase durante el warm-up.','Montada':'Montada inestable — hip thrust = control de cadera arriba. Prioriza esa serie.','Arco y flecha':'Arco y flecha falla — remo unilateral y jalón al pecho son tu foco. Visualiza durante el warm-up.','Barras':'Barras débiles — agarre sin straps, isométrico en la posición de fallo en cada set.','Fatiga muscular':'Fatiga muscular — RPE máx 8 hoy. Siempre 1-2 reps en el tanque, no al fallo.','Calambres':'Calambres — hidrátate con electrolitos ANTES de llegar al gym. Leg press en warm-up.'};
+  const recs=last.weaks.slice(0,2).map(w=>MAP[w]).filter(Boolean);
+  if(!recs.length) return null;
+  return `<strong>Última sesión ${last.date} (${last.type}):</strong> ${last.weaks.join(', ')} estuvieron flojos.<br><br>${recs.join('<br>')}`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// GYMS — con imagen y reconocimiento de equipamiento
+// ══════════════════════════════════════════════════════════════
+
+function renderGyms(){
+  const list=document.getElementById('gyms-list');
+  list.innerHTML=S.gyms.map(g=>`
+    <div class="gym-card">
+      <div class="gym-card-hdr">
+        <div class="gym-card-name">${g.name}</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="toggleGymEdit('${g.id}')">✏️ Editar</button>
+          <button class="btn btn-blue btn-sm" onclick="openGymAdapt('${g.id}')">🤖 Adaptar</button>
+          ${!g.isBase?`<button class="btn btn-ghost btn-sm" style="color:var(--red-bright)" onclick="deleteGym('${g.id}')">🗑</button>`:''}
+        </div>
+      </div>
+      ${g.img?`<img class="gym-img" src="${g.img}" alt="Foto del gym">`:''}
+      <div class="gym-equip" id="equip-disp-${g.id}">${g.equip||'Sin equipamiento registrado'}</div>
+      <textarea class="gym-edit-area" id="equip-edit-${g.id}">${g.equip||''}</textarea>
+      <div id="gym-edit-btns-${g.id}" style="display:none;padding:8px 14px">
+        <!-- IMAGE UPLOAD -->
+        <div class="img-upload-zone" onclick="document.getElementById('img-inp-${g.id}').click()">
+          <input type="file" id="img-inp-${g.id}" accept="image/*" onchange="handleGymImage('${g.id}', this)">
+          <div style="font-size:20px;margin-bottom:5px">📷</div>
+          <div style="font-size:12px;color:var(--muted)">Sube una foto del gym</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:3px">La IA detectará el equipamiento automáticamente</div>
+        </div>
+        <img id="img-prev-${g.id}" class="img-preview" src="" alt="">
+        <div id="ai-equip-${g.id}" class="gym-ai-equip"></div>
+        <div class="btn-row">
+          <button class="btn btn-red btn-sm" onclick="saveGymEdit('${g.id}')">Guardar</button>
+          <button class="btn btn-ghost btn-sm" onclick="cancelGymEdit('${g.id}')">Cancelar</button>
+        </div>
+      </div>
+      <div id="gym-adapt-out-${g.id}" class="gym-adapt-result"></div>
+    </div>`).join('');
+}
+
+function toggleGymEdit(id){
+  const area=document.getElementById('equip-edit-'+id);
+  const disp=document.getElementById('equip-disp-'+id);
+  const btns=document.getElementById('gym-edit-btns-'+id);
+  const open=area.classList.contains('open');
+  if(open){ area.classList.remove('open'); disp.style.display='block'; btns.style.display='none'; }
+  else { const g=S.gyms.find(g=>g.id===id); area.value=g?.equip||''; area.classList.add('open'); disp.style.display='none'; btns.style.display='block'; }
+}
+
+function saveGymEdit(id){
+  const val=document.getElementById('equip-edit-'+id)?.value.trim();
+  const g=S.gyms.find(g=>g.id===id);
+  if(g&&val){ g.equip=val; SAVE(); }
+  toggleGymEdit(id);
+  renderGyms();
+  toast('✓ Gym actualizado','var(--success)');
+}
+
+function cancelGymEdit(id){ toggleGymEdit(id); }
+function deleteGym(id){ S.gyms=S.gyms.filter(g=>g.id!==id); SAVE(); renderGyms(); toast('Gym eliminado','var(--muted)'); }
+function showAddGym(){ document.getElementById('add-gym-form').style.display='block'; }
+function cancelAddGym(){ document.getElementById('add-gym-form').style.display='none'; }
+
+function saveNewGym(){
+  const name=document.getElementById('ng-name').value.trim();
+  const equip=document.getElementById('ng-equip').value.trim();
+  if(!name){ toast('Pon un nombre al gym','var(--red)'); return; }
+  S.gyms.push({id:'gym_'+Date.now(),name:'🏋️ '+name,equip:equip||'Sin equipamiento registrado',img:null,isBase:false});
+  SAVE(); cancelAddGym(); renderGyms(); toast('✓ Gym agregado','var(--success)');
+}
+
+async function handleGymImage(gymId, input){
+  const file=input.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=async(e)=>{
+    const b64=e.target.result.split(',')[1];
+    const mediaType=file.type;
+    // Show preview
+    const prev=document.getElementById('img-prev-'+gymId);
+    prev.src=e.target.result; prev.style.display='block';
+    const aiOut=document.getElementById('ai-equip-'+gymId);
+    aiOut.classList.add('show'); aiOut.innerHTML='<span class="ai-loading">🔍 Analizando imagen del gym...</span>';
+
+    try{
+      const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:mediaType,data:b64}},
+          {type:'text',text:`Analiza esta foto de un gimnasio o zona de entrenamiento. Identifica TODOS los equipos y aparatos que puedas ver. Para cada uno indica:
+1. Nombre del equipo
+2. Cómo se usa brevemente (1 línea)
+3. 1-2 ejercicios de BJJ S&C que se pueden hacer con él
+
+Formato de respuesta:
+EQUIPAMIENTO DETECTADO:
+- [Equipo]: [uso breve] → Ejercicios: [ej1], [ej2]
+
+Luego una línea:
+RESUMEN PARA RUTINA: [lista separada por comas de todos los equipos detectados]
+
+En español. Si no es un gym o no hay equipamiento claro, indícalo.`}
+        ]}]
+      })});
+      const data=await res.json();
+      const txt=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'No se pudo analizar.';
+      aiOut.innerHTML=`<div style="font-size:10px;font-weight:700;color:#BB8FCE;margin-bottom:6px;letter-spacing:1px">🤖 EQUIPAMIENTO DETECTADO POR IA</div><div style="white-space:pre-wrap;font-size:12px;color:#CCC;line-height:1.6">${txt}</div>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn btn-purple btn-sm" onclick="applyAIEquipment('${gymId}','${encodeURIComponent(txt)}')">Aplicar al gym</button>
+      </div>`;
+      // Store image
+      const g=S.gyms.find(g=>g.id===gymId);
+      if(g) g.img=e.target.result;
+      SAVE();
+    }catch(err){ aiOut.innerHTML='<span style="color:var(--red-bright)">Error al analizar la imagen.</span>'; }
+  };
+  reader.readAsDataURL(file);
+}
+
+function applyAIEquipment(gymId, encodedTxt){
+  const txt=decodeURIComponent(encodedTxt);
+  const match=txt.match(/RESUMEN PARA RUTINA:\s*(.+)/i);
+  const summary=match?match[1].trim():txt;
+  const area=document.getElementById('equip-edit-'+gymId);
+  if(area){ area.value=(area.value?area.value+'\n\n':'')+'[Detectado por IA]:\n'+summary; }
+  toast('✓ Equipamiento aplicado al editor — guarda para confirmar','var(--success)');
+}
+
+function openGymAdapt(id){
+  const g=S.gyms.find(g=>g.id===id);
+  if(!g) return;
+  const out=document.getElementById('gym-adapt-out-'+id);
+  // Ask which day/phase
+  out.classList.add('show');
+  out.innerHTML=`<div style="margin-bottom:10px;font-size:11px;font-weight:600;color:var(--gold)">Adaptar rutina a: ${g.name}</div>
+  <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+    <select class="fsel" id="ad-day-${id}" style="flex:1;min-width:120px;font-size:12px;padding:6px 10px">
+      <option value="lunes">Lunes</option><option value="miercoles">Miércoles</option>
+    </select>
+    <select class="fsel" id="ad-ph-${id}" style="flex:1;min-width:120px;font-size:12px;padding:6px 10px">
+      <option value="1">Fase 1 — Fuerza</option><option value="2">Fase 2 — Potencia</option><option value="3">Fase 3 — Afilamiento</option>
+    </select>
+  </div>
+  <button class="btn btn-blue btn-sm" onclick="runGymAdapt('${id}')">🤖 Generar rutina adaptada</button>
+  <div id="adapt-result-${id}" style="margin-top:10px;font-size:12px;color:#CCC;line-height:1.6;white-space:pre-wrap"></div>`;
+}
+
+async function runGymAdapt(id){
+  const g=S.gyms.find(g=>g.id===id);
+  if(!g) return;
+  const day=document.getElementById('ad-day-'+id).value;
+  const phase=parseInt(document.getElementById('ad-ph-'+id).value);
+  const phName=PHASES[phase].title;
+  const dayLabel=day==='lunes'?'Lunes (Lower Dominant + Pull Horizontal)':'Miércoles (Knee Dominant + Pull Vertical)';
+  const bjjCtx=S.diary.slice(0,3).map(e=>`${e.date}: mal=${e.weaks.join(',')}`).join('; ');
+  const out=document.getElementById('adapt-result-'+id);
+  out.textContent='Generando...';
+
+  const prompt=`Eres un entrenador S&C para BJJ competitivo. Atleta: 27 años, 65 kg, intermedio Gi+No-Gi, competencia 6 Jun 2026.
+
+Rutina habitual (${phName} — ${dayLabel}):
+Core: Press Pallof, Jalón diagonal
+Fuerza principal (TUT): ${day==='lunes'?'Hip thrust (Smith), Remo unilateral':'Zercher squat (Smith), Jalón al pecho (polea)'}
+Fuerza secundaria: ${day==='lunes'?'Búlgara, Press inclinado':'RDL mancuernas, Press hombro'}
+Finisher: Bicicleta estacionaria
+
+Equipamiento disponible en ${g.name}: ${g.equip}
+
+Historial BJJ reciente (debilidades): ${bjjCtx||'Sin datos'}
+
+Adapta la rutina. Mantén: Respiración/Movilidad → Core → Fuerza Principal A1/A2 (con tempo) → Fuerza Secundaria B1/B2 → Finisher cardio.
+Para cada ejercicio: Nombre → sets×reps → tempo (si aplica) → ejecución 1 línea → conexión BJJ 1 línea.
+Sin calistenia, sin anillas en el gym, sin burpees. Solo equipo convencional disponible. Español. Máx 280 palabras.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    out.textContent=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'Error.';
+  }catch(e){out.textContent='Error de conexión.';}
+}
+
+// ══════════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════════
+
+function toast(msg,color,dur=2500){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.background=color||'var(--success)';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+
+LOAD();
+tick();
+setInterval(tick,60000);
+// Register Service Worker for offline support
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+document.getElementById('pb-title').textContent=PHASES[S.phase].title;
+document.getElementById('pb-text').textContent=PHASES[S.phase].text;
+// Restore phase/day buttons
+document.querySelectorAll('.ph-btn')[S.phase-1]?.classList.add('active');
+const dayBtns=document.querySelectorAll('.day-btn');
+if(S.day==='miercoles') { dayBtns[0]?.classList.remove('active'); dayBtns[1]?.classList.add('active'); }
+renderSemana();
+renderWorkout();
+renderCalistenia();
+renderProgress();
+// Restore cal level button
+const calLvlMap={basico:'cal-b',intermedio:'cal-i',avanzado:'cal-a'};
+document.querySelectorAll('.cal-btn').forEach(b=>b.classList.remove('active'));
+document.getElementById(calLvlMap[S.calLevel||'basico'])?.classList.add('active');
+</script>
+</body>
+</html>
